@@ -61,6 +61,14 @@
 \usepackage{multicol}
 
 
+%{{{ inputfile
+
+% source: http://tex.stackexchange.com/questions/40738/how-to-properly-make-a-latex-project
+\newcommand\inputfile[1]{%
+    \InputIfFileExists{#1}{}{\typeout{No file #1.}}%
+}
+%}}}
+
 %{{{ Avebritations
 
 \usepackage{xspace}
@@ -125,7 +133,7 @@
 %{{{ Graphics Loading
 
 \usepackage{graphicx}
-\graphicspath{{../material/presentation/}}
+\graphicspath{{../material/presentation/}{../material/latex-add-ins/}}
 \usepackage{caption}
 \captionsetup[figure]{labelformat=empty, font=scriptsize, justification=raggedleft, singlelinecheck=false}% redefines the caption setup of the figures environment in the beamer class.
 %}}}
@@ -212,6 +220,10 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 %{{{
 \begin{frame}{What is RISCV?}
+	\begin{figure}
+		\includegraphics[width=0.8\linewidth]{../material/latex-add-ins/image1}
+		\source{\url{http://www.anandtech.com/show/2354/2}}
+	\end{figure}
 \end{frame}
 %}}}
 

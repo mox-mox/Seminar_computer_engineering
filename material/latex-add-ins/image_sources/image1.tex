@@ -10,7 +10,7 @@
 \begin{tikzpicture}[>=latex']
 
     % Draw blocks, inputs and outputs
-    \foreach \y in {1,2,3,4,5} {
+    \foreach \y in {1,2,3} {
         \node at (0,-\y) (input\y) {$i_\y$};
         \node[block] at (2,-\y) (block\y) {$f_\y$};
         \draw[->] (input\y) -- (block\y);
@@ -29,7 +29,7 @@
     % not seem to work when shifting coordinates.
 
     \draw[->] (branch) node[branch] {}{ % draw branch junction
-            \foreach \c in {2,3,4,5} {
+            \foreach \c in {2,3} {
                 % Draw semicircle junction to indicate that the lines are
                 % not connected. The intersection between the lines are
                 % calculated using the convenient -| syntax. Since we want

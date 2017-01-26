@@ -4,6 +4,7 @@
 #
 # A image-let is a file with only the TeX code needed to define the image itself and cannot be compiled alone without some boilerplate code
 
+all: 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.pdf
 
 add-in-dir := ../material/latex-add-ins
 
@@ -12,21 +13,21 @@ add-in-dir := ../material/latex-add-ins
 outerfile1 := \
 "\\RequirePackage{luatex85}"\
 "\\documentclass{standalone}\n"\
-"\\input{../material/latex-add-ins/common}\n"\
+"\\input{$(add-in-dir)/common}\n"\
 "\\\begin{document}\n"\
 
 outerfile2 := \
 "\\\end{document}\n"\
 
 # Find all tex images and require them to be build
-images := $(notdir $(wildcard ../material/latex-add-ins/image_sources/*.tex))
-images := $(addprefix ../material/latex-add-ins/,$(images:tex=pdf))
+images := $(notdir $(wildcard $(add-in-dir)/image_sources/*.tex))
+images := $(addprefix $(add-in-dir)/,$(images:tex=pdf))
 
 image-lets: $(images)
 
-../material/latex-add-ins/%.pdf: ../material/latex-add-ins/image_sources/%.tex
-	@echo -e $(outerfile1) "\\input{"$(basename $<)"}\n" $(outerfile2)
-	@#echo -e $(outerfile1) "\\input{"$(basename $<)"}\n" $(outerfile2) | lualatex -shell-escape -jobname $(notdir $(basename $@))
+$(add-in-dir)/%.pdf: $(add-in-dir)/image_sources/%.tex
+	@#echo -e $(outerfile1) "\\input{"$(basename $<)"}\n" $(outerfile2)
+	@echo -e $(outerfile1) "\\input{"$(basename $<)"}\n" $(outerfile2) | lualatex -shell-escape -jobname $(notdir $(basename $@))
 	mv $(notdir $@) $@
 	@rm -f  $(notdir $(basename $@)).aux $(notdir $(basename $@)).log
 
@@ -35,11 +36,15 @@ image-lets: $(images)
 
 
 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.pdf: 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.tex $(images)
+	latexmk -lualatex -latexoption="-interaction=nonstopmode --shell-escape"  -use-make $<
 
+.PHONY: distclean
+distclean: clean
+	rm -f *.pdf
 
 .PHONY: clean
 clean:
-	rm -f *.pdf  *.log  *.aux  *.nav  *.out  *.snm  *.toc  *.vrb  *.synctex.gz
+	rm -f *.log  *.aux  *.nav  *.out  *.snm  *.toc  *.vrb  *.synctex.gz  *.fls  *.fdb_latexmk
 	rm -rf _minted*
 
 .PHONY: clean-imagelets
