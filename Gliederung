@@ -1,0 +1,29 @@
+Vortrag: 30-35 min + 10 min Diskussion
+Paper: 6 Seiten, ieeetran
+
+
+
+- Einführung (kurz)
+   + Was ist RISCV
+   + Was it RocketChip
+     = Wie "benutze" ich den RocketChip?
+       -> Was ist Chisel
+       -> Verilog erzeugen (sehr kurz)
+       -> RocketChip und Synopsys (Falls ich das zum Laufen bekomme)
+
+- Aufbau und Interfaces
+   + Überblick über die wichtigsten Module (Welche Module gibt es, welche
+module werden in welchen instantiert)
+   + Beschreibung der Interfaces zwischen
+     = Chip und Außenwelt (Modul ExampleRocketTop)
+     = DefaultCoreplex_coreplex (Ich denke, das ist die eigentliche CPU)
+     = RocketTile (Ich glaube, das ist der eigentliche Core, der für
+Multicore-Anwendungen repliziert wird.)
+
+- Einschätzung: Ist RocketChip geeignet für ...? (Soll ich so einen
+Punkt einbringen, und was wäre da die genaue Fragestellung?)
+
+- Ausblick
+   + Welche weiteren RISCV-Projekte gibt es?
+   + Wie weit ist RocketChip?
+
