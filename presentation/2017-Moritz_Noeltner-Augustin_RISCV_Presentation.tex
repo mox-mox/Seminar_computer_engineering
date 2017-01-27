@@ -67,6 +67,19 @@
 \newcommand\inputfile[1]{%
     \InputIfFileExists{#1}{}{\typeout{No file #1.}}%
 }
+
+
+%\newcommand*{\COMPILEIMAGES}{}%
+
+\newcommand\inputimage[1]{%
+	\ifdefined\COMPILEIMAGES
+		\input{../material/latex-add-ins/image_sources/#1}
+	\else
+		\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{../material/latex-add-ins/#1}
+	\fi
+	}
+
+
 %}}}
 
 %{{{ Avebritations
@@ -193,6 +206,12 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 
+
+\newcommand*{\COMPILEIMAGES}{}%
+
+\input{../material/latex-add-ins/common}
+
+
 %{{{
 \begin{document}
 
@@ -220,35 +239,22 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 %{{{
 \begin{frame}{What is RISCV?}
-	\begin{figure}
-		\includegraphics[width=0.8\linewidth]{../material/latex-add-ins/image1}
-		\source{\url{http://www.anandtech.com/show/2354/2}}
-	\end{figure}
+	Open source ISA...
 \end{frame}
 %}}}
 
 %{{{
-\begin{frame}{Title}
+\begin{frame}{What is RocketChip}
 \end{frame}
 %}}}
 
 %{{{
-\begin{frame}{Title}
+\begin{frame}{How can I "use" RocketChip}
+	Use make ... to generate verilog code or C++ simulator
+	make run uses Synopsys vcs; difficult to use with cadence
+	https://github.com/ucb-bar/rocket-chip/issues/51
 \end{frame}
 %}}}
-
-%{{{
-\begin{frame}{Title}
-\end{frame}
-%}}}
-
-%{{{
-\begin{frame}{Title}
-\end{frame}
-%}}}
-
-
-
 
 %}}} End: section{Introduction}
 
@@ -257,7 +263,15 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \section{Structure}
 
 %{{{
-\begin{frame}{Title}
+\begin{frame}{ExampleRocketTop}
+	\begin{figure}
+		\centering
+		\inputimage{image1}
+		%\input{../material/latex-add-ins/image_sources/image1.tex}
+		%\inputfile{../material/latex-add-ins/image1.tex}
+		%\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{../material/latex-add-ins/image1}
+		\source{\url{http://www.anandtech.com/show/2354/2}}
+	\end{figure}
 \end{frame}
 %}}}
 

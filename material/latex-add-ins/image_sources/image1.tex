@@ -1,45 +1,30 @@
-% Temporary example file taken from: http://www.texample.net/tikz/examples/line-junctions/
-% Author: Kjell Magne Fauske
+\begin{tikzpicture}[node distance=1cm, auto]
+	%\tikzset{%
+	%	mynode/.style={rectangle,rounded corners,draw=black,top color=white, bottom color=white!50,very thick, inner sep=1em, minimum size=3em, text centered},
+	%	invnode/.style={inner sep=0,minimum size=0}
+	%}
+	\node[mynode](s){Start};
+	\node[invnode, right of=s](i1){};
+	\node[mynode, right of=i1](a){Address};
+	\node[invnode, right of=a](i2){};
+	\node[mynode, right of=i2](r){R/W};
+	\node[invnode, right of=r](i3){};
+	\node[invnode, below of=i3](iv1){};
+	\node[invnode, below of=iv1](iv2){};
+	\node[invnode, below of=iv2](iv3){};
+	\node[mynode, below of=iv3](ack1){ACK};
+	\node[mynode, right of=i3](d){Data};
+	\node[invnode, right of=d](i4){};
+	\node[invnode, below of=i4](iv4){};
+	\node[invnode, below of=iv4](iv5){};
+	\node[invnode, below of=iv5](iv6){};
+	\node[mynode, below of=iv6](ack2){NACK};
+	\node[mynode, right of=i4](p){Stop};
 
-
-\tikzstyle{block} = [draw,fill=blue!20,minimum size=2em]
-% diameter of semicircle used to indicate that two lines are not connected
-\def\radius{.7mm} 
-\tikzstyle{branch}=[fill,shape=circle,minimum size=3pt,inner sep=0pt]
-
-\begin{tikzpicture}[>=latex']
-
-    % Draw blocks, inputs and outputs
-    \foreach \y in {1,2,3} {
-        \node at (0,-\y) (input\y) {$i_\y$};
-        \node[block] at (2,-\y) (block\y) {$f_\y$};
-        \draw[->] (input\y) -- (block\y);
-        \draw[->] (block\y.east) -- +(0.5,0);
-    }
-    \node[block] at (2,-6) (block6) {$f_6$};
-    \draw[->] (block6.east) -- +(0.5,0);
-
-    % Calculate branch point coordinate
-    \path (input1) -- coordinate (branch) (block1);
-
-    % Define a style for shifting a coordinate upwards
-    % Note the curly brackets around the coordinate.
-    \tikzstyle{s}=[shift={(0mm,\radius)}]
-    % It would be natural to use the yshift or xshift option, but that does
-    % not seem to work when shifting coordinates.
-
-    \draw[->] (branch) node[branch] {}{ % draw branch junction
-            \foreach \c in {2,3} {
-                % Draw semicircle junction to indicate that the lines are
-                % not connected. The intersection between the lines are
-                % calculated using the convenient -| syntax. Since we want
-                % the semicircle to have its center where the lines intersect,
-                % we have to shift the intersection coordinate using the 's'
-                % style to account for this.
-                [shift only] -- ([s]input\c -| branch) arc(90:-90:\radius)
-                % Note the use of the [shift only] option. It is not necessary,
-                % but I have used it to ensure that the semicircles have the
-                % same size regardless of scaling.
-            }
-        } |- (block6);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (s.east) to node[auto, swap] {}(a.west); 
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (a.east) to node[auto, swap] {}(r.west); 
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (r.east) to node[auto, swap] {}(ack1.north); 
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (ack1.north) to node[auto, swap] {}(d.west); 
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (d.east) to node[auto, swap] {}(ack2.north); 
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (ack2.north) to node[auto, swap] {}(p.west); 
 \end{tikzpicture}
