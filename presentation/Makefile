@@ -2,38 +2,24 @@
 #
 # Author: mox
 #
-# A image-let is a file with only the TeX code needed to define the image itself and cannot be compiled alone without some boilerplate code
 
 all: 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.pdf
 
+
+############################## Tikz image-lets compilation ##############################
+
+# An image-let is a file with only the TeX code needed to define the image itself and cannot be compiled alone without some boilerplate code
+
 add-in-dir := ../material/latex-add-ins
-
-
-# The minimal boilerplate file for each image-let
-outerfile1 := \
-"\\RequirePackage{luatex85}"\
-"\\documentclass{standalone}\n"\
-"\\input{$(add-in-dir)/common}\n"\
-"\\\begin{document}\n"\
-
-outerfile2 := \
-"\\\end{document}\n"\
 
 # Find all tex images and require them to be build
 images := $(notdir $(wildcard $(add-in-dir)/image_sources/*.tex))
 images := $(addprefix $(add-in-dir)/,$(images:tex=pdf))
 
-image-lets: $(images)
+$(add-in-dir)/%.pdf: $(add-in-dir)/image_sources/%.tex $(add-in-dir)/common.tex $(add-in-dir)/boilerplate.tex
+	$(MAKE) -C $(add-in-dir) $(notdir $@)
 
-$(add-in-dir)/%.pdf: $(add-in-dir)/image_sources/%.tex
-	@#echo -e $(outerfile1) "\\input{"$(basename $<)"}\n" $(outerfile2)
-	@echo -e $(outerfile1) "\\input{"$(basename $<)"}\n" $(outerfile2) | lualatex -shell-escape -jobname $(notdir $(basename $@))
-	mv $(notdir $@) $@
-	@rm -f  $(notdir $(basename $@)).aux $(notdir $(basename $@)).log
-
-
-
-
+#########################################################################################
 
 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.pdf: 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.tex $(images)
 	latexmk -lualatex -latexoption="-interaction=nonstopmode --shell-escape"  -use-make $<

@@ -10,24 +10,9 @@ images := $(images:tex=pdf)
 all: $(images)
 
 
-
-
-## The minimal boilerplate file for each image-let
-#outerfile1 := \
-#"\\RequirePackage{luatex85}"\
-#"\\documentclass{standalone}\n"\
-#"\\input{common}\n"\
-#"\\\begin{document}\n"\
-#
-#outerfile2 := \
-#"\\\end{document}\n"\
-
-
 # Build all images as stand-alone version
-%.pdf: image_sources/%.tex
-	lualatex -shell-escape --jobname '$(notdir $(basename $<))' boilerplate.tex
-	@#echo -e $(outerfile1) "\\input{"$(basename $<)"}\n" $(outerfile2)
-	@#echo -e $(outerfile1) "\\input{"$(basename $<)"}\n" $(outerfile2) | lualatex -shell-escape -jobname $(basename $@)
+%.pdf: image_sources/%.tex common.tex boilerplate.tex
+	lualatex -shell-escape --jobname '$(basename $@)' boilerplate.tex
 	@rm -f  $(basename $@).aux $(basename $@).log
 
 
