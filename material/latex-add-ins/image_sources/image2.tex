@@ -1,21 +1,66 @@
-% Temporary example file taken from http://www.texample.net/tikz/examples/double-arrows/
-% Double Arrows a la Chef
-% Author: Dominik Haumann
+%\begin{tikzpicture}[node distance=1cm]
+\begin{tikzpicture}[scale=0.4]
+	\node (Item) [abstract, rectangle split, rectangle split parts=2]
+	{%
+		\textbf{ITEM}
+		\nodepart{second}name
+	};
+	\node (AuxNode01) [text width=4cm, below=of Item] {};
+	\node (Component) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode01]
+	{%
+		\textbf{COMPONENT}
+		\nodepart{second}nil
+	};
+	\node (System) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode01]
+	{%
+		\textbf{SYSTEM}
+		\nodepart{second}parts
+	};
+	\node (AuxNode02) [text width=0.5cm, below=of Component] {};
+	\node (Sensor) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode02]
+	{%
+		\textbf{SENSOR}
+		\nodepart{second}nil
+	};
+	\node (Part) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode02]
+	{%
+		\textbf{PART}
+		\nodepart{second}nil
+	};
 
 
-\begin{tikzpicture}[thick]
-  \node[draw,rectangle] (a) {A};
-  \node[inner sep=0,minimum size=0,right of=a] (k) {}; % invisible node
-  \node[draw,rectangle,right of=k] (b) {B};
-  \node[draw,rectangle,below of=a] (c) {C};
 
-  % 1st pass: draw arrows
-  \draw[vecArrow] (a) to (b);
-  \draw[vecArrow] (k) |- (c);
+	\node (AuxNode05) [below=of System] {};
+	\node (CoolingSystem) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode05, xshift=2cm]
+	{%
+		\textbf{Cooling System}
+		\nodepart{second}nil
+	};
+	\node (CoolingLoop) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode05, xshift=-2cm]
+	{%
+		\textbf{Cooling Loop}
+		\nodepart{second}nil
+	};
+	\node (CoolingSystemInstants) [comment, rectangle split, rectangle split parts=2, below=0.2cm of CoolingSystem, text justified]
+	{%
+		\textbf{Instants}
+		\nodepart{second}cool
+	};
+	\node (CoolingLoopInstants) [comment, rectangle split, rectangle split parts=2, below=0.2cm of CoolingLoop, text justified]
+	{%
+		\textbf{Instants}
+		\nodepart{second}fw-loop\newline sw-loop
+	};
 
-  % 2nd pass: copy all from 1st pass, and replace vecArrow with innerWhite
-  \draw[innerWhite] (a) to (b);
-  \draw[innerWhite] (k) |- (c);
+	\draw[myarrow] (Component.north) -- ++(0,0.8) -| (Item.south);
+	\draw[line] (Component.north) -- ++(0,0.8) -| (System.north);
 
-  % Note: If you have no branches, the 2nd pass is not needed
+	\draw[myarrow] (Sensor.north) -- ++(0,0.8) -| (Component.south);
+	\draw[line] (Sensor.north) -- ++(0,0.8) -| (Part.north);
+
+
+
+	\draw[myarrow] (CoolingSystem.north) -- ++(0,0.8) -| (System.south);
+	\draw[line] (CoolingSystem.north) -- ++(0,0.8) -| (CoolingLoop.north);
+
 \end{tikzpicture}

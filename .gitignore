@@ -17,7 +17,7 @@
 # these rules might exclude image files for figures etc.
 # *.ps
 # *.eps
-*.pdf
+#*.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
@@ -182,3 +182,4 @@ TSWLatexianTemp*
 
 
 seminar2014.pdf
+2017-Moritz_Noeltner-Augustin_RISCV_Presentation.pdf

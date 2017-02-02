@@ -1,3 +1,4 @@
+
 %{{{ Preamble
 
 %\documentclass[draft]{beamer} %% normal document
@@ -60,6 +61,7 @@
 
 \usepackage{multicol}
 
+\input{../material/latex-add-ins/common}
 
 %{{{ inputfile
 
@@ -114,6 +116,7 @@
 \definecolor{darkblue}{rgb}{0,0,.5}
 %linkcolor will also affect the text in the navigation bar on the top of each slide
 %\hypersetup{pdftex=true, colorlinks=true, breaklinks=true, linkcolor=darkblue, menucolor=darkblue, pagecolor=darkblue, urlcolor=darkblue}
+\hypersetup{pdfpagemode=FullScreen}
 %}}}
 
 %{{{ Animate
@@ -146,7 +149,7 @@
 %{{{ Graphics Loading
 
 \usepackage{graphicx}
-\graphicspath{{../material/presentation/}{../material/latex-add-ins/}}
+\graphicspath{{../material/presentation/}{../material/background/}}
 \usepackage{caption}
 \captionsetup[figure]{labelformat=empty, font=scriptsize, justification=raggedleft, singlelinecheck=false}% redefines the caption setup of the figures environment in the beamer class.
 %}}}
@@ -206,10 +209,10 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 
-
+% Whether to compile the image-lets or include the pre-compiled ones
 \newcommand*{\COMPILEIMAGES}{}%
-
-\input{../material/latex-add-ins/common}
+%\usepackage{draftwatermark}
+%\setbeamercolor{background canvas}{bg=}%transparent canvas
 
 
 %{{{
@@ -244,15 +247,33 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 %}}}
 
 %{{{
-\begin{frame}{What is RocketChip}
+\begin{frame}{What is RocketChip?}
+	\centering
+	\includegraphics[width=0.90\pagewidth,height=0.80\pageheight,keepaspectratio]{EECS-2016-17_fig1}
 \end{frame}
 %}}}
 
 %{{{
-\begin{frame}{How can I "use" RocketChip}
-	Use make ... to generate verilog code or C++ simulator
-	make run uses Synopsys vcs; difficult to use with cadence
-	https://github.com/ucb-bar/rocket-chip/issues/51
+\begin{frame}[fragile]{How can I "use" RocketChip?}
+	\begin{minipage}[c][.4\textheight][c]{\linewidth}
+		\begin{minted}[fontsize=\small, gobble=3]{bash}
+			git clone https://github.com/ucb-bar/rocket-chip.git
+			cd rocket-chip
+			#git checkout boom
+			git submodule update --init --recursive
+			# Now the repo is about 3GB
+			cd riscv-tools
+			export RISCV=/path/to/toolchain/install
+			export PATH="${PATH}:$RISCV/bin"
+			./build.sh # Takes about 45 min
+			# The toolchain is another 800MB
+			cd ../emulator
+			make run CONFIG=BOOMConfig
+			make run CONFIG=ExampleSmallConfig
+			cd ../vsim
+			make -jN CONFIG=ExampleSmallConfig # about 20 min
+		\end{minted}
+	\end{minipage}
 \end{frame}
 %}}}
 
@@ -263,15 +284,53 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \section{Structure}
 
 %{{{
-\begin{frame}{ExampleRocketTop}
-	\begin{figure}
-		\centering
-		\inputimage{image1}
-		%\input{../material/latex-add-ins/image_sources/image1.tex}
-		%\inputfile{../material/latex-add-ins/image1.tex}
-		%\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{../material/latex-add-ins/image1}
-		\source{\url{http://www.anandtech.com/show/2354/2}}
-	\end{figure}
+\begin{frame}[fragile]{What can be configured?}
+	\$(ROCKET-CHIP)/src/main/scala/coreplex/Configs.scala:
+	\begin{columns}
+		\column{0.33\textwidth}
+		More than 70 parameters:
+		\begin{itemize}
+			\item MemWidth
+			\item Cache (I \& D)
+				\begin{itemize}
+					\item nSets
+					\item nWays
+					\item rowBits
+					\item nTLBEntries
+					\item cacheIdBits
+					\item splitMetadata
+					\item Replacer
+				\end{itemize}
+			\item NBreakpoints
+			\item FPUKey
+			\item UseAtomics
+		\end{itemize}
+		\pause
+		\column{0.67\textwidth}
+		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{java}
+			pname match {
+				case PAddrBits => 32
+				case NTiles => 1
+				...
+			}
+		\end{minted}
+		\pause
+		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{java}
+			...
+			class WithNCores(n: Int) extends Config(
+				(pname,site,here) => pname match {
+					case NTiles => n
+					case _ => throw new CDEMatchError
+				})
+		\end{minted}
+		\pause
+		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{java}
+			...
+			class DualCoreConfig extends Config(
+			new WithNCores(2) ++ new WithL2Cache
+			                  ++ new BaseConfig)
+		\end{minted}
+	\end{columns}
 \end{frame}
 %}}}
 
@@ -283,6 +342,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 %{{{
 \begin{frame}{Title}
+	\CC
 \end{frame}
 %}}}
 

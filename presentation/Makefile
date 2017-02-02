@@ -3,7 +3,11 @@
 # Author: mox
 #
 
-all: 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.pdf
+
+PROJECT_NAME := 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.pdf
+
+
+all: $(PROJECT_NAME)
 
 
 ############################## Tikz image-lets compilation ##############################
@@ -21,8 +25,23 @@ $(add-in-dir)/%.pdf: $(add-in-dir)/image_sources/%.tex $(add-in-dir)/common.tex 
 
 #########################################################################################
 
-2017-Moritz_Noeltner-Augustin_RISCV_Presentation.pdf: 2017-Moritz_Noeltner-Augustin_RISCV_Presentation.tex $(images)
+$(PROJECT_NAME): $(PROJECT_NAME:pdf=tex) $(images)
 	latexmk -lualatex -latexoption="-interaction=nonstopmode --shell-escape"  -use-make $<
+
+
+
+
+
+
+
+
+.PHONY: view
+view: $(PROJECT_NAME)
+	@echo "Starting gtkwave"
+	@bash -c "zathura $^ 2>/dev/null > /dev/null &"
+
+
+
 
 .PHONY: distclean
 distclean: clean
