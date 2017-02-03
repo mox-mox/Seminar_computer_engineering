@@ -2,10 +2,6 @@
 	\pgfmathsetmacro{\memBlocks}{3};
 	\pgfmathsetmacro{\ways}{4};
 
-
-
-
-
 	%{{{ Mem
 
 	\node(dummy) at (-5, 0) {};
@@ -42,17 +38,18 @@
 	\coordinate (cacheB) at ($ (cacheA) + (2*\cacheWidth,0) $);
 	\coordinate(cacheHint) at ($ (cacheA) + (-0.8*\cacheWidth,220) $);
 	\node at ($ (cacheHint) + (0,5) $) {index i};
+	\node[font=\normalsize] at ($ (cacheA) + (\cacheWidth,-10) $) {\textbf{Cache}};
 
 	\foreach \i in {0,...,\number\numexpr\ways-1\relax}
 	{
-		\pgfmathsetmacro{\y}{10+\i*55};
+		\pgfmathsetmacro{\y}{175-\i*55};
 		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y)    $) to                                ($ (cacheA) + (0,\y+40) $);
 		\draw[-, >=latex',       thick] ($ (cacheB) + (0,\y)    $) to                                ($ (cacheB) + (0,\y+40) $);
 		\draw[-, >=latex', ultra thick] ($ (cacheA) + (0,\y)    $) to                                ($ (cacheB) + (0,\y)    $);
 		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y+10) $) to node[above=-0.10] {Cache-block}($ (cacheB) + (0,\y+10) $);
 		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y+20) $) to                                ($ (cacheB) + (0,\y+20) $);
 		\draw[-, >=latex', ultra thick] ($ (cacheA) + (0,\y+40) $) to                                ($ (cacheB) + (0,\y+40) $);
-		\node at ($ (cacheA) + (5,\y+45) $) {Set \i};
+		\node at ($ (cacheA) + (10,\y+45) $) {Set \i};
 
 		\foreach \i in {0,...,\number\numexpr\memBlocks-1\relax}
 		{
@@ -60,8 +57,22 @@
 			\draw[->, >=latex'] ($ (memB) + (0,\yy)    $) to                       ($ (cacheA) + (0,\y+15)    $);
 		}
 
-		\draw[->, >=latex', thick] (cacheHint) to                       ($ (cacheA) + (0,\y+15)    $);
+		\draw[->, >=latex', thick, dashed] (cacheHint) to                       ($ (cacheA) + (0,\y+15)    $);
     }
+	%}}}
+
+
+	%{{{ Hardware
+
+	\coordinate (hwA) at ($ (cacheA) + (150,0) $);
+	\node[font=\normalsize] at ($ (hwA) + (\cacheWidth,-10) $) {\textbf{Hardware Structure}};
+
+	\node[text width=40, align=center](tm0) at ($ (hwA) + (\cacheWidth,50) $) {\textbf{Tag \\ Mem~0}};
+	\draw ($ (tm0) + (-20,-20) $) rectangle ($ (tm0) + (20,20) $);
+
+	%\draw ($ (hwA) + (\cacheWidth,50) $) rectangle +(40,40) node[midway, text width=6] (tm0) {Tag Mem~0};
+	%\node[draw, fit={($ (hwA) + (\cacheWidth,50) $) ($ (hwA) + (\cacheWidth+40,50+40) $)}, inner sep=0pt, label=center:Tag Mem~0] (A) {};
+
 	%}}}
 
 

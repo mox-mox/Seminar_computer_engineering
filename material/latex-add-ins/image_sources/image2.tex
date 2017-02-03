@@ -1,66 +1,66 @@
 %\begin{tikzpicture}[node distance=1cm]
 \begin{tikzpicture}[scale=0.4]
-	\node (Item) [abstract, rectangle split, rectangle split parts=2]
-	{%
-		\textbf{ITEM}
-		\nodepart{second}name
-	};
-	\node (AuxNode01) [text width=4cm, below=of Item] {};
-	\node (Component) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode01]
-	{%
-		\textbf{COMPONENT}
-		\nodepart{second}nil
-	};
-	\node (System) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode01]
-	{%
-		\textbf{SYSTEM}
-		\nodepart{second}parts
-	};
-	\node (AuxNode02) [text width=0.5cm, below=of Component] {};
-	\node (Sensor) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode02]
-	{%
-		\textbf{SENSOR}
-		\nodepart{second}nil
-	};
-	\node (Part) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode02]
-	{%
-		\textbf{PART}
-		\nodepart{second}nil
-	};
-
-
-
-	\node (AuxNode05) [below=of System] {};
-	\node (CoolingSystem) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode05, xshift=2cm]
-	{%
-		\textbf{Cooling System}
-		\nodepart{second}nil
-	};
-	\node (CoolingLoop) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode05, xshift=-2cm]
-	{%
-		\textbf{Cooling Loop}
-		\nodepart{second}nil
-	};
-	\node (CoolingSystemInstants) [comment, rectangle split, rectangle split parts=2, below=0.2cm of CoolingSystem, text justified]
-	{%
-		\textbf{Instants}
-		\nodepart{second}cool
-	};
-	\node (CoolingLoopInstants) [comment, rectangle split, rectangle split parts=2, below=0.2cm of CoolingLoop, text justified]
-	{%
-		\textbf{Instants}
-		\nodepart{second}fw-loop\newline sw-loop
-	};
-
-	\draw[myarrow] (Component.north) -- ++(0,0.8) -| (Item.south);
-	\draw[line] (Component.north) -- ++(0,0.8) -| (System.north);
-
-	\draw[myarrow] (Sensor.north) -- ++(0,0.8) -| (Component.south);
-	\draw[line] (Sensor.north) -- ++(0,0.8) -| (Part.north);
-
-
-
-	\draw[myarrow] (CoolingSystem.north) -- ++(0,0.8) -| (System.south);
-	\draw[line] (CoolingSystem.north) -- ++(0,0.8) -| (CoolingLoop.north);
+%	\node (Item) [abstract, rectangle split, rectangle split parts=2]
+%	{%
+%		\textbf{ITEM}
+%		\nodepart{second}name
+%	};
+%	\node (AuxNode01) [text width=4cm, below=of Item] {};
+%	\node (Component) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode01]
+%	{%
+%		\textbf{COMPONENT}
+%		\nodepart{second}nil
+%	};
+%	\node (System) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode01]
+%	{%
+%		\textbf{SYSTEM}
+%		\nodepart{second}parts
+%	};
+%	\node (AuxNode02) [text width=0.5cm, below=of Component] {};
+%	\node (Sensor) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode02]
+%	{%
+%		\textbf{SENSOR}
+%		\nodepart{second}nil
+%	};
+%	\node (Part) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode02]
+%	{%
+%		\textbf{PART}
+%		\nodepart{second}nil
+%	};
+%
+%
+%
+%	\node (AuxNode05) [below=of System] {};
+%	\node (CoolingSystem) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode05, xshift=2cm]
+%	{%
+%		\textbf{Cooling System}
+%		\nodepart{second}nil
+%	};
+%	\node (CoolingLoop) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode05, xshift=-2cm]
+%	{%
+%		\textbf{Cooling Loop}
+%		\nodepart{second}nil
+%	};
+%	\node (CoolingSystemInstants) [comment, rectangle split, rectangle split parts=2, below=0.2cm of CoolingSystem, text justified]
+%	{%
+%		\textbf{Instants}
+%		\nodepart{second}cool
+%	};
+%	\node (CoolingLoopInstants) [comment, rectangle split, rectangle split parts=2, below=0.2cm of CoolingLoop, text justified]
+%	{%
+%		\textbf{Instants}
+%		\nodepart{second}fw-loop\newline sw-loop
+%	};
+%
+%	\draw[myarrow] (Component.north) -- ++(0,0.8) -| (Item.south);
+%	\draw[line] (Component.north) -- ++(0,0.8) -| (System.north);
+%
+%	\draw[myarrow] (Sensor.north) -- ++(0,0.8) -| (Component.south);
+%	\draw[line] (Sensor.north) -- ++(0,0.8) -| (Part.north);
+%
+%
+%
+%	\draw[myarrow] (CoolingSystem.north) -- ++(0,0.8) -| (System.south);
+%	\draw[line] (CoolingSystem.north) -- ++(0,0.8) -| (CoolingLoop.north);
 
 \end{tikzpicture}

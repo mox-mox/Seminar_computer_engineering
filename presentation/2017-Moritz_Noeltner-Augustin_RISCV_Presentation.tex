@@ -190,7 +190,17 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 %}}}
 
+%{{{ Fullpage
+
+\newenvironment{fullpage}[0]{%
+	\begin{list}{}{%
+		\setlength{\leftmargin}{-10mm}%
+		\setlength{\rightmargin}{-10mm}%
+		\vspace*{-10pt}
+		}%
+\item[]}{\end{list}}
 %}}}
+
 
 %{{{ Title
 
@@ -210,6 +220,9 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 	Universität Heidelberg
 }
 %}}}
+
+%}}}
+
 
 
 
@@ -366,11 +379,10 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 %{{{
 \begin{frame}{How to add configuration?}
-	\begin{figure}
+	\begin{fullpage}
 		\centering
 		\inputimage{image1}
-		\source{\url{http://www.anandtech.com/show/2354/2}}
-	\end{figure}
+	\end{fullpage}
 \end{frame}
 %}}}
 
