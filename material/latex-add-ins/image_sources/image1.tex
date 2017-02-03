@@ -68,10 +68,13 @@
 	\node[font=\normalsize] at ($ (hwA) + (\cacheWidth,-10) $) {\textbf{Hardware Structure}};
 
 	\node[text width=40, align=center](tm0) at ($ (hwA) + (\cacheWidth,50) $) {\textbf{Tag \\ Mem~0}};
-	\draw ($ (tm0) + (-20,-20) $) rectangle ($ (tm0) + (20,20) $);
-
-	%\draw ($ (hwA) + (\cacheWidth,50) $) rectangle +(40,40) node[midway, text width=6] (tm0) {Tag Mem~0};
-	%\node[draw, fit={($ (hwA) + (\cacheWidth,50) $) ($ (hwA) + (\cacheWidth+40,50+40) $)}, inner sep=0pt, label=center:Tag Mem~0] (A) {};
+	\draw ($ (tm0) + (-20,-20) $) rectangle ++(40,40);
+	\draw ($ (tm0) + (-30,-20) $) -- ++(0, 40) -- ++(-20, -10) -- ++(0, -20) --cycle;
+	\draw ($ (tm0) + (-20,10) $) -- ++(-10, 00);
+	\draw ($ (tm0) + (-20,-10) $) -- ++(-10, 00);
+	\node[text width=40, align=center] at ($ (tm0) + (0,-40) $) {\textbf{=}};
+	\draw ($ (tm0) + (-20,-50) $) rectangle ++(40,20);
+	\draw[->, >=latex', ultra thick] ($ (tm0) + (0,-20) $) to                       ++(0,-10);
 
 	%}}}
 
