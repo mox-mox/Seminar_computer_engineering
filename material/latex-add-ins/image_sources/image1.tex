@@ -27,7 +27,7 @@
 		\pgfmathsetmacro{\y}{30+\i*70};
 		\draw[-, >=latex', ultra thick] ($ (memA) + (0,\y)    $) to                       ($ (memB) + (0,\y)    $);
 		\draw[-, >=latex',       thick] ($ (memA) + (0,\y+10) $) to                       ($ (memB) + (0,\y+10) $);
-		\node at ($ (memB) + (10,\y+15) $) {$i^{th}$};
+		\node at ($ (memA) + (20,\y+16) $) {$i^{th}$ line};
 		\draw[-, >=latex',       thick] ($ (memA) + (0,\y+20) $) to node[above=-0.10] {Mem-block}($ (memB) + (0,\y+20) $);
 		\draw[-, >=latex', ultra thick] ($ (memA) + (0,\y+30) $) to                       ($ (memB) + (0,\y+30) $);
 		\draw[-, >=latex',       thick] ($ (memA) + (0,\y+10) $) to                       ($ (memB) + (0,\y+10) $);
@@ -40,6 +40,8 @@
 	\pgfmathsetmacro{\cacheWidth}{35};
 	\coordinate (cacheA) at ($ (memA) + (150,0) $);
 	\coordinate (cacheB) at ($ (cacheA) + (2*\cacheWidth,0) $);
+	\coordinate(cacheHint) at ($ (cacheA) + (-0.8*\cacheWidth,220) $);
+	\node at ($ (cacheHint) + (0,5) $) {index i};
 
 	\foreach \i in {0,...,\number\numexpr\ways-1\relax}
 	{
@@ -51,6 +53,14 @@
 		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y+20) $) to                                ($ (cacheB) + (0,\y+20) $);
 		\draw[-, >=latex', ultra thick] ($ (cacheA) + (0,\y+40) $) to                                ($ (cacheB) + (0,\y+40) $);
 		\node at ($ (cacheA) + (5,\y+45) $) {Set \i};
+
+		\foreach \i in {0,...,\number\numexpr\memBlocks-1\relax}
+		{
+			\pgfmathsetmacro{\yy}{45+\i*70};
+			\draw[->, >=latex'] ($ (memB) + (0,\yy)    $) to                       ($ (cacheA) + (0,\y+15)    $);
+		}
+
+		\draw[->, >=latex', thick] (cacheHint) to                       ($ (cacheA) + (0,\y+15)    $);
     }
 	%}}}
 
