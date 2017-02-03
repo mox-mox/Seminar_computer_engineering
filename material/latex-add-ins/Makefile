@@ -16,6 +16,12 @@ all: $(images)
 	@rm -f  $(basename $@).aux $(basename $@).log
 
 
+.PHONY: view
+view: $(PROJECT_NAME)
+	@echo "Starting gtkwave"
+	@bash -c "zathura $^ 2>/dev/null > /dev/null &"
+
+
 .PHONY: clean
 clean:
 	rm -f *.pdf

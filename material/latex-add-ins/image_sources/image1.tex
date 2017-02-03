@@ -1,26 +1,58 @@
-\begin{tikzpicture}[node distance=1cm, auto]
-	\node[mynode](s){Start};
-	\node[invnode, right of=s](i1){};
-	\node[mynode, right of=i1](a){Address};
-	\node[invnode, right of=a](i2){};
-	\node[mynode, right of=i2](r){R/W};
-	\node[invnode, right of=r](i3){};
-	\node[invnode, below of=i3](iv1){};
-	\node[invnode, below of=iv1](iv2){};
-	\node[invnode, below of=iv2](iv3){};
-	\node[mynode, below of=iv3](ack1){ACK};
-	\node[mynode, right of=i3](d){Data};
-	\node[invnode, right of=d](i4){};
-	\node[invnode, below of=i4](iv4){};
-	\node[invnode, below of=iv4](iv5){};
-	\node[invnode, below of=iv5](iv6){};
-	\node[mynode, below of=iv6](ack2){NACK};
-	\node[mynode, right of=i4](p){Stop};
+\begin{tikzpicture}[scale=0.3]
+	\pgfmathsetmacro{\memBlocks}{3};
+	\pgfmathsetmacro{\ways}{4};
 
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (s.east) to node[auto, swap] {}(a.west); 
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (a.east) to node[auto, swap] {}(r.west); 
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (r.east) to node[auto, swap] {}(ack1.north); 
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (ack1.north) to node[auto, swap] {}(d.west); 
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (d.east) to node[auto, swap] {}(ack2.north); 
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (ack2.north) to node[auto, swap] {}(p.west); 
+
+
+
+
+	%{{{ Mem
+
+	\node(dummy) at (-5, 0) {};
+	\pgfmathsetmacro{\memWidth}{25};
+	\coordinate (memA) at (0,0);
+	\coordinate (memB) at ($ (memA) + (2*\memWidth,0) $);
+
+	\draw[-,   >=latex',                               thick] ($ (memA) + (0,10) $) to node[auto, swap] {}($ (memA) + (0,220) $);
+	\draw[-,   >=latex',                               thick] ($ (memB) + (0,10) $) to node[auto, swap] {}($ (memB) + (0,220) $);
+	\node[font=\normalsize] at ($ (memA) + (\memWidth,-10) $) {\textbf{Main Memory}};
+	\foreach \i in {0,...,\memBlocks}
+	{
+		\pgfmathsetmacro{\y}{-40+\i*70};
+		\coordinate (set\i) at ($ (memA) + (0,\y) $);
+		\draw[-, >=latex', ultra thick, loosely dotted] ($ (set\i) + (\memWidth,43) $) to node[auto, swap] {}($ (set\i) + (\memWidth,60) $);
+    }
+	\foreach \i in {0,...,\number\numexpr\memBlocks-1\relax}
+	{
+		\pgfmathsetmacro{\y}{30+\i*70};
+		\draw[-, >=latex', ultra thick] ($ (memA) + (0,\y)    $) to                       ($ (memB) + (0,\y)    $);
+		\draw[-, >=latex',       thick] ($ (memA) + (0,\y+10) $) to                       ($ (memB) + (0,\y+10) $);
+		\node at ($ (memB) + (10,\y+15) $) {$i^{th}$};
+		\draw[-, >=latex',       thick] ($ (memA) + (0,\y+20) $) to node[above=-0.10] {Mem-block}($ (memB) + (0,\y+20) $);
+		\draw[-, >=latex', ultra thick] ($ (memA) + (0,\y+30) $) to                       ($ (memB) + (0,\y+30) $);
+		\draw[-, >=latex',       thick] ($ (memA) + (0,\y+10) $) to                       ($ (memB) + (0,\y+10) $);
+    }
+	%}}}
+
+
+	%{{{ Cache
+
+	\pgfmathsetmacro{\cacheWidth}{35};
+	\coordinate (cacheA) at ($ (memA) + (150,0) $);
+	\coordinate (cacheB) at ($ (cacheA) + (2*\cacheWidth,0) $);
+
+	\foreach \i in {0,...,\number\numexpr\ways-1\relax}
+	{
+		\pgfmathsetmacro{\y}{10+\i*55};
+		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y)    $) to                                ($ (cacheA) + (0,\y+40) $);
+		\draw[-, >=latex',       thick] ($ (cacheB) + (0,\y)    $) to                                ($ (cacheB) + (0,\y+40) $);
+		\draw[-, >=latex', ultra thick] ($ (cacheA) + (0,\y)    $) to                                ($ (cacheB) + (0,\y)    $);
+		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y+10) $) to node[above=-0.10] {Cache-block}($ (cacheB) + (0,\y+10) $);
+		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y+20) $) to                                ($ (cacheB) + (0,\y+20) $);
+		\draw[-, >=latex', ultra thick] ($ (cacheA) + (0,\y+40) $) to                                ($ (cacheB) + (0,\y+40) $);
+		\node at ($ (cacheA) + (5,\y+45) $) {Set \i};
+    }
+	%}}}
+
+
 \end{tikzpicture}

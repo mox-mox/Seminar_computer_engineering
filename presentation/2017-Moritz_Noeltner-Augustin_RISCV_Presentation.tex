@@ -73,6 +73,10 @@
 
 %\newcommand*{\COMPILEIMAGES}{}%
 
+
+% Whether to compile the image-lets or include the pre-compiled ones
+\newcommand*{\COMPILEIMAGES}{}%
+
 \newcommand\inputimage[1]{%
 	\ifdefined\COMPILEIMAGES
 		\input{../material/latex-add-ins/image_sources/#1}
@@ -209,12 +213,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 
-% Whether to compile the image-lets or include the pre-compiled ones
-\newcommand*{\COMPILEIMAGES}{}%
-%\usepackage{draftwatermark}
-%\setbeamercolor{background canvas}{bg=}%transparent canvas
-
-
 %{{{
 \begin{document}
 
@@ -334,6 +332,48 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \end{frame}
 %}}}
 
+
+%{{{
+\begin{frame}[fragile]{How can I configure the chip?}
+	\begin{minted}[fontsize=\small, gobble=1, tabsize=2]{java}
+	class BaseCoreplexConfig extends Config ((site, here, up) => {
+		case CacheName("L1I") => CacheConfig(
+			nSets         = 64,
+			nWays         = 4,
+			rowBits       = site(L1toL2Config).beatBytes*8,
+			nTLBEntries   = 8,
+			cacheIdBits   = 0,
+			splitMetadata = false)
+	\end{minted}
+	\pause
+	\begin{minted}[fontsize=\small, gobble=1, tabsize=2]{java}
+	...
+	class WithL1ICacheSets(sets: Int)
+		extends Config((site,here,up) => {
+		case CacheName("L1I") =>
+			up(CacheName("L1I"),site).copy(nSets=sets)
+	})
+	\end{minted}
+	\pause
+	\begin{minted}[fontsize=\small, gobble=1, tabsize=2]{java}
+	...
+	class DualCoreConfig2way32sets extends Config(
+		new WithNCores(2)++new WithL1ICacheSets(32)++new BaseConfig)
+	\end{minted}
+\end{frame}
+%}}}
+
+
+%{{{
+\begin{frame}{How to add configuration?}
+	\begin{figure}
+		\centering
+		\inputimage{image1}
+		\source{\url{http://www.anandtech.com/show/2354/2}}
+	\end{figure}
+\end{frame}
+%}}}
+
 %}}} End: section{Structure and Interfaces}
 
 
@@ -341,23 +381,19 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \section{Interfaces}
 
 %{{{
+\begin{frame}{AXI-Interface}
+	Note: AXI4... does not mean axi for ... but is the protocol version, AXI4.
+	TODO
+\end{frame}
+%}}}
+
+%{{{
 \begin{frame}{Title}
-	\CC
+	TODO
 \end{frame}
 %}}}
 
 %}}} End: section{Structure and Interfaces}
-
-
-%{{{
-\section[Estimation]{Personal Estimation: Is RocketChip appropriate for \ldots?}
-
-%{{{
-\begin{frame}{Serial Peripheral Interface}
-\end{frame}
-%}}}
-
-%}}} End: section{Estimation}
 
 
 %{{{
