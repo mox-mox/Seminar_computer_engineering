@@ -1,6 +1,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows, decorations.markings}
 \usetikzlibrary{positioning,shapes,shadows,calc,positioning}
+\usetikzlibrary{decorations.pathreplacing,angles,quotes}
 %\usetikzlibrary{fit}
 
 
@@ -33,3 +34,26 @@
 
 \usepackage{etex} %% Cool Stuff, see http://tex.stackexchange.com/a/36721/69074 : \foreach \i in {0,...,\number\numexpr\memBlocks-1\relax}
 \newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.03em}\raisebox{.4ex}{\tiny\bf +}}
+
+
+
+
+%{{{ Extract Coordinates
+
+% http://tex.stackexchange.com/a/179946/69074
+\makeatletter
+\def\extractcoord#1#2#3{%
+  \path let \p1=(#3) in \pgfextra{%
+    \pgfmathsetmacro#1{\x{1}/\pgf@xx}%
+    \pgfmathsetmacro#2{\y{1}/\pgf@yy}%
+    \xdef#1{#1} \xdef#2{#2}%
+  };%
+}%
+\makeatother
+
+\newcommand*{\LabelCoord}[4]{\fill [#1] ($(#2,#3)$) circle (2pt) node [right] {#4}}%
+%}}}
+
+
+% For image1
+\newif\iffourway

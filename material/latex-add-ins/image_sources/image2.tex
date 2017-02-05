@@ -1,66 +1,61 @@
-%\begin{tikzpicture}[node distance=1cm]
-\begin{tikzpicture}[scale=0.4]
-%	\node (Item) [abstract, rectangle split, rectangle split parts=2]
-%	{%
-%		\textbf{ITEM}
-%		\nodepart{second}name
-%	};
-%	\node (AuxNode01) [text width=4cm, below=of Item] {};
-%	\node (Component) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode01]
-%	{%
-%		\textbf{COMPONENT}
-%		\nodepart{second}nil
-%	};
-%	\node (System) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode01]
-%	{%
-%		\textbf{SYSTEM}
-%		\nodepart{second}parts
-%	};
-%	\node (AuxNode02) [text width=0.5cm, below=of Component] {};
-%	\node (Sensor) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode02]
-%	{%
-%		\textbf{SENSOR}
-%		\nodepart{second}nil
-%	};
-%	\node (Part) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode02]
-%	{%
-%		\textbf{PART}
-%		\nodepart{second}nil
-%	};
+\begin{tikzpicture}[scale=0.3]
+
+	%	\fourwaytrue
+
+	\iffourway
+		\pgfmathsetmacro{\ways}{4};
+		\pgfmathsetmacro{\tagbits}{19};
+		\pgfmathsetmacro{\indexbits}{5};
+		\pgfmathsetmacro{\nSets}{64};
+		\pgfmathsetmacro{\nBytes}{32};
+	\else
+		\pgfmathsetmacro{\ways}{2};
+		\pgfmathsetmacro{\tagbits}{20};
+		\pgfmathsetmacro{\indexbits}{4};
+		\pgfmathsetmacro{\nSets}{32};
+		\pgfmathsetmacro{\nBytes}{64};
+	\fi
+
+
+
+	\node[font=\normalsize] at (40,-10) {\textbf{ICache\_icache}};
+	\draw (0,0) rectangle ++(200,200);
+%	 \draw[->, thick] (-80,190) -- node[above=-2pt, font=\small] {clock}                         ++(80,0);
+%	 \draw[->, thick] (-80,170) -- node[above=-2pt, font=\small] {reset}                         ++(80,0);
+%	 \draw[->, thick] (-80,150) -- node[above=-2pt, font=\small] {io\_req\_valid}                ++(80,0);
+%	 \draw[->, thick] (-80,130) -- node[above=-2pt, font=\small] {io\_req\_bits\_addr}           ++(80,0);
+%	 \draw[->, thick] (-80,110) -- node[above=-2pt, font=\small] {io\_s1\_ppn}                   ++(80,0);
+%	%\draw[->, thick] (-80,130) -- node[above=-2pt, font=\small] {38:0 io\_req\_bits\_addr}      ++(80,0);
+%	%\draw[->, thick] (-80,110) -- node[above=-2pt, font=\small] {19:0 io\_s1\_ppn}              ++(80,0);
+%	 \draw[->, thick] (-80, 90) -- node[above=-2pt, font=\small] {io\_s1\_kill}                  ++(80,0);
+%	 \draw[->, thick] (-80, 70) -- node[above=-2pt, font=\small] {io\_s2\_kill}                  ++(80,0);
+%	 \draw[->, thick] (-80, 50) -- node[above=-2pt, font=\small] {io\_resp\_ready}               ++(80,0);
+%	 \draw[<-, thick] (-80, 30) -- node[above=-2pt, font=\small] {io\_resp\_valid}               ++(80,0);
+%	 \draw[<-, thick] (-80, 10) -- node[above=-2pt, font=\small] {}                              ++(80,0);
 %
-%
-%
-%	\node (AuxNode05) [below=of System] {};
-%	\node (CoolingSystem) [abstract, rectangle split, rectangle split parts=2, left=of AuxNode05, xshift=2cm]
-%	{%
-%		\textbf{Cooling System}
-%		\nodepart{second}nil
-%	};
-%	\node (CoolingLoop) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode05, xshift=-2cm]
-%	{%
-%		\textbf{Cooling Loop}
-%		\nodepart{second}nil
-%	};
-%	\node (CoolingSystemInstants) [comment, rectangle split, rectangle split parts=2, below=0.2cm of CoolingSystem, text justified]
-%	{%
-%		\textbf{Instants}
-%		\nodepart{second}cool
-%	};
-%	\node (CoolingLoopInstants) [comment, rectangle split, rectangle split parts=2, below=0.2cm of CoolingLoop, text justified]
-%	{%
-%		\textbf{Instants}
-%		\nodepart{second}fw-loop\newline sw-loop
-%	};
-%
-%	\draw[myarrow] (Component.north) -- ++(0,0.8) -| (Item.south);
-%	\draw[line] (Component.north) -- ++(0,0.8) -| (System.north);
-%
-%	\draw[myarrow] (Sensor.north) -- ++(0,0.8) -| (Component.south);
-%	\draw[line] (Sensor.north) -- ++(0,0.8) -| (Part.north);
-%
-%
-%
-%	\draw[myarrow] (CoolingSystem.north) -- ++(0,0.8) -| (System.south);
-%	\draw[line] (CoolingSystem.north) -- ++(0,0.8) -| (CoolingLoop.north);
+%	 \draw[->, thick] (200,190) -- node[above=-2pt, font=\small] {io\_resp\_bits\_data}          ++(80,0);
+%	 \draw[->, thick] (200,170) -- node[above=-2pt, font=\small] {io\_resp\_bits\_datablock}     ++(80,0);
+%	 \draw[->, thick] (200,150) -- node[above=-2pt, font=\small] {io\_invalidate}                ++(80,0);
+%	 \draw[->, thick] (200,130) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_ready}          ++(80,0);
+%	 \draw[->, thick] (200,110) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_valid}          ++(80,0);
+%	 \draw[->, thick] (200, 90) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_opcode}   ++(80,0);
+%	 \draw[->, thick] (200, 70) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_param}    ++(80,0);
+%	 \draw[->, thick] (200, 50) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_size}     ++(80,0);
+%	 \draw[<-, thick] (200, 30) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_source}   ++(80,0);
+%	 \draw[<-, thick] (200, 10) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_address}  ++(80,0);
+%	 \draw[<-, thick] (200,-10) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_mask}     ++(80,0);
+%	 \draw[<-, thick] (200,-30) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_data}     ++(80,0);
+
+
+	\draw[->, thick] (-70,190) -- node[above=-2pt, font=\small] {To Processor}                   ++(70,0);
+	\draw[->, thick] (200,190) -- node[above=-2pt, font=\small] {TileLink\_a}                    ++(60,0);
+	\draw[<-, thick] (200,170) -- node[above=-2pt, font=\small] {TileLink\_b}                    ++(60,0);
+	\draw[->, thick] (200,150) -- node[above=-2pt, font=\small] {TileLink\_c}                    ++(60,0);
+	\draw[<-, thick] (200,130) -- node[above=-2pt, font=\small] {TileLink\_d}                    ++(60,0);
+	\draw[->, thick] (200,110) -- node[above=-2pt, font=\small] {TileLink\_e}                    ++(60,0);
+
+
+
+
 
 \end{tikzpicture}

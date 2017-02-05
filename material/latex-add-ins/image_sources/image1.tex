@@ -1,10 +1,24 @@
 \begin{tikzpicture}[scale=0.3]
 	\pgfmathsetmacro{\memBlocks}{3};
-	\pgfmathsetmacro{\ways}{4};
+
+	%	\fourwaytrue
+
+	\iffourway
+		\pgfmathsetmacro{\ways}{4};
+		\pgfmathsetmacro{\tagbits}{19};
+		\pgfmathsetmacro{\indexbits}{5};
+		\pgfmathsetmacro{\nSets}{64};
+		\pgfmathsetmacro{\nBytes}{32};
+	\else
+		\pgfmathsetmacro{\ways}{2};
+		\pgfmathsetmacro{\tagbits}{20};
+		\pgfmathsetmacro{\indexbits}{4};
+		\pgfmathsetmacro{\nSets}{32};
+		\pgfmathsetmacro{\nBytes}{64};
+	\fi
 
 	%{{{ Mem
 
-	\node(dummy) at (-5, 0) {};
 	\pgfmathsetmacro{\memWidth}{25};
 	\coordinate (memA) at (0,0);
 	\coordinate (memB) at ($ (memA) + (2*\memWidth,0) $);
@@ -33,8 +47,8 @@
 
 	%{{{ Cache
 
-	\pgfmathsetmacro{\cacheWidth}{35};
-	\coordinate (cacheA) at ($ (memA) + (150,0) $);
+	\pgfmathsetmacro{\cacheWidth}{28};
+	\coordinate (cacheA) at ($ (memA) + (100,0) $);
 	\coordinate (cacheB) at ($ (cacheA) + (2*\cacheWidth,0) $);
 	\coordinate(cacheHint) at ($ (cacheA) + (-0.8*\cacheWidth,220) $);
 	\node at ($ (cacheHint) + (0,5) $) {index i};
@@ -43,13 +57,14 @@
 	\foreach \i in {0,...,\number\numexpr\ways-1\relax}
 	{
 		\pgfmathsetmacro{\y}{175-\i*55};
+		\node at ($ (cacheA) + (10,\y-5) $) {Set \i};
 		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y)    $) to                                ($ (cacheA) + (0,\y+40) $);
 		\draw[-, >=latex',       thick] ($ (cacheB) + (0,\y)    $) to                                ($ (cacheB) + (0,\y+40) $);
-		\draw[-, >=latex', ultra thick] ($ (cacheA) + (0,\y)    $) to                                ($ (cacheB) + (0,\y)    $);
-		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y+10) $) to node[above=-0.10] {Cache-block}($ (cacheB) + (0,\y+10) $);
-		\draw[-, >=latex',       thick] ($ (cacheA) + (0,\y+20) $) to                                ($ (cacheB) + (0,\y+20) $);
-		\draw[-, >=latex', ultra thick] ($ (cacheA) + (0,\y+40) $) to                                ($ (cacheB) + (0,\y+40) $);
-		\node at ($ (cacheA) + (10,\y+45) $) {Set \i};
+
+		\draw[-, >=latex', ultra thick] ($ (cacheA) + (-0.45,\y)    $) to                                ($ (cacheB) + (0.45,\y)    $);
+		\draw[-, >=latex',       thick] ($ (cacheA) + (-0.45,\y+10) $) to node[above=-0.10] {Cache-block}($ (cacheB) + (0.45,\y+10) $);
+		\draw[-, >=latex',       thick] ($ (cacheA) + (-0.45,\y+20) $) to                                ($ (cacheB) + (0.45,\y+20) $);
+		\draw[-, >=latex', ultra thick] ($ (cacheA) + (-0.45,\y+40) $) to                                ($ (cacheB) + (0.45,\y+40) $);
 
 		\foreach \i in {0,...,\number\numexpr\memBlocks-1\relax}
 		{
@@ -58,23 +73,58 @@
 		}
 
 		\draw[->, >=latex', thick, dashed] (cacheHint) to                       ($ (cacheA) + (0,\y+15)    $);
+
+		\draw[decoration={brace,mirror,raise=2pt},decorate] ($ (cacheB) + (0,\y)    $) -- node[right=3pt] {\nSets sets} ++(0, 40);
     }
+
+	\draw[decoration={brace,mirror,raise=2pt},decorate] ($ (cacheB) + (0,215) $) -- node[above=3pt] {\nBytes bytes} ($ (cacheA) + (0,215) $);
+
 	%}}}
 
 
-	%{{{ Hardware
+	%{{{ Address Logic
 
-	\coordinate (hwA) at ($ (cacheA) + (150,0) $);
-	\node[font=\normalsize] at ($ (hwA) + (\cacheWidth,-10) $) {\textbf{Hardware Structure}};
+	\coordinate (hwA) at ($ (cacheA) + (110,0) $);
+	\extractcoord\hwAx\hwAy{hwA}%
+	\pgfmathsetmacro{\hwOffset}{30};
+	\pgfmathsetmacro{\tmOffset}{70};
 
-	\node[text width=40, align=center](tm0) at ($ (hwA) + (\cacheWidth,50) $) {\textbf{Tag \\ Mem~0}};
-	\draw ($ (tm0) + (-20,-20) $) rectangle ++(40,40);
-	\draw ($ (tm0) + (-30,-20) $) -- ++(0, 40) -- ++(-20, -10) -- ++(0, -20) --cycle;
-	\draw ($ (tm0) + (-20,10) $) -- ++(-10, 00);
-	\draw ($ (tm0) + (-20,-10) $) -- ++(-10, 00);
-	\node[text width=40, align=center] at ($ (tm0) + (0,-40) $) {\textbf{=}};
-	\draw ($ (tm0) + (-20,-50) $) rectangle ++(40,20);
-	\draw[->, >=latex', ultra thick] ($ (tm0) + (0,-20) $) to                       ++(0,-10);
+	\node[font=\normalsize] at ($ (hwA) + (\hwOffset+20,-10) $) {\textbf{Address Logic}};
+
+	\node[font=\normalsize] at (\hwAx+20,220) {\textbf{Address}};
+
+	\draw[->, >=latex', ultra thick] (\hwAx,210) -- ++(0,\tmOffset-15-210) -- ++(\hwOffset+5,0);
+	\draw[->, >=latex', ultra thick] (\hwAx+15,210) -- ++(0,\tmOffset+40-210);
+
+	\node[font=\small, rotate=90] at (\hwAx-7,160) {tag[\tagbits:0]};
+	\node[font=\small, rotate=90] at (\hwAx+8,160) {index[\indexbits:0]};
+
+	\node[text width=10, align=center, draw, circle](or) at (\hwAx+\hwOffset+25*\ways, \hwAy+\tmOffset-55) {\textbf{or}};
+	\draw[->, >=latex', ultra thick] (or.east) -- ++(20,0);
+	\node[font=\small] at ($(or.east)+(10, 10)$) {hit};
+
+	\foreach \i in {0,...,\number\numexpr\ways-1\relax}
+	{
+		\pgfmathsetmacro{\x}{\hwAx+\hwOffset+25*\ways-25*\i};
+		\pgfmathsetmacro{\y}{\hwAy+\tmOffset+25*\ways-25*\i};
+
+		\coordinate (tmBase) at (\x, \y);
+		\draw[->, >=latex', ultra thick] (\x-44, \y-40) -- ++(40,30);
+
+		\draw[fill=white] ($ (tmBase) + (-20,-20) $) rectangle ++(40,40);
+		\node[text width=40, align=center](tm0) at (tmBase) {\textbf{Tag \\ Mem~\number\numexpr\ways-\i-1\relax}};
+		\draw ($ (tmBase) + (-30,-20) $) -- ++(0, 40) -- ++(-20, -10) -- ++(0, -20) --cycle;
+		\draw ($ (tmBase) + (-20,10) $) -- ++(-10, 00);
+		\draw ($ (tmBase) + (-20,-10) $) -- ++(-10, 00);
+		\draw[fill=white] ($ (tmBase) + (-20,-50) $) rectangle ++(40,20);
+		\node[text width=40, align=center] at ($ (tmBase) + (0,-40) $) {\textbf{=}};
+		\draw[->, >=latex', ultra thick] ($ (tmBase) + (0,-20) $) to                       ++(0,-10);
+
+		\draw[->, >=latex', ultra thick] (\hwAx+15, \y+30) -- (\x-40, \y+30) -- (\x-40, \y+15);
+		\coordinate (orBase) at (or.\number\numexpr90-\ways/2*10+\i*10\relax);
+
+		\draw[->, >=latex', ultra thick] (\x, \y-50) -- ++(0,-10) -- (orBase |- 0, \y-60) -- (orBase);
+	}
 
 	%}}}
 
