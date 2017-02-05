@@ -403,35 +403,31 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \end{frame}
 %}}}
 
-
 %{{{
 \begin{frame}[fragile]{How to configure RocketChip? /2}
 	\begin{fullpage}
 	\$(ROCKET-CHIP)/src/main/scala/rocketchip
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{java}
-			class DualCoreConfig4way extends Config(
-				new WithNCores(2) ++ new WithL1ICacheWays(4)
-				++ new WithL1ICacheSets(64) ++ new WithCacheBlockBytes(32)
-				++ new WithL2Cache ++ new BaseConfig)
-
 			class DualCoreConfig2way extends Config(
 				new WithNCores(2) ++ new WithL1ICacheWays(2)
 				++ new WithL1ICacheSets(32) ++ new WithCacheBlockBytes(64)
+				++ new WithL2Cache ++ new BaseConfig)
+
+			class DualCoreConfig4way extends Config(
+				new WithNCores(2) ++ new WithL1ICacheWays(4)
+				++ new WithL1ICacheSets(64) ++ new WithCacheBlockBytes(32)
 				++ new WithL2Cache ++ new BaseConfig)
 		\end{minted}
 		pause
 		\begin{minted}[fontsize=\small, gobble=3]{bash}
 			cd rocket-chip/vsim
-			make -j5 CONFIG=DualCoreConfig4way
-			...
 			make -j5 CONFIG=DualCoreConfig2way
+			...
+			make -j5 CONFIG=DualCoreConfig4way
 		\end{minted}
 	\end{fullpage}
 \end{frame}
 %}}}
-
-
-
 
 %{{{
 \begin{frame}{Cache Example, 2-Way /1}
@@ -455,13 +451,93 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 %{{{
-\begin{frame}[fragile]{How to configure RocketChip: Results}
+\begin{frame}[fragile,t]{Results: Module ICache\_icache (2 ways, 32 sets, 64 bytes)}
 	\begin{fullpage}
-		\inputimage{image2}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{minipage}[t][\textheight][l]{\linewidth}
+			\begin{minted}[fontsize=\small, gobble=4, tabsize=2]{verilog}
+				module tag_array( // x1
+					input  [4:0] RW0_addr,
+					input   RW0_en,
+					input   RW0_clk,
+					input   RW0_wmode,
+					input  [20:0] RW0_wdata_0,
+					input  [20:0] RW0_wdata_1,
+					output [20:0] RW0_rdata_0,
+					output [20:0] RW0_rdata_1,
+					input   RW0_wmask_0,
+					input   RW0_wmask_1
+				);
+				reg [41:0] ram [31:0];
+			\end{minted}
+		\end{minipage}
+		\column{0.5\textwidth}
+		\begin{minipage}[t][\textheight][l]{\linewidth}
+			\begin{minted}[fontsize=\small, gobble=4, tabsize=2]{verilog}
+				module _T_772( // x2
+					input  [7:0] RW0_addr,
+					input   RW0_en,
+					input   RW0_clk,
+					input   RW0_wmode,
+					input  [63:0] RW0_wdata,
+					output [63:0] RW0_rdata
+				);
+				reg [63:0] ram [255:0];
+			\end{minted}
+		\end{minipage}
+	\end{columns}
 	\end{fullpage}
 \end{frame}
 %}}}
 
+
+%{{{
+\begin{frame}[fragile,t]{Results: Module ICache\_icache (4 ways, 64 sets, 32 bytes)}
+	\begin{fullpage}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{minipage}[t][\textheight][l]{\linewidth}
+			\begin{minted}[fontsize=\small, gobble=4, tabsize=2]{verilog}
+				module tag_array( // x1
+					input  [5:0] RW0_addr,
+					input   RW0_en,
+					input   RW0_clk,
+					input   RW0_wmode,
+					input  [20:0] RW0_wdata_0,
+					input  [20:0] RW0_wdata_1,
+					input  [20:0] RW0_wdata_2,
+					input  [20:0] RW0_wdata_3,
+					output [20:0] RW0_rdata_0,
+					output [20:0] RW0_rdata_1,
+					output [20:0] RW0_rdata_2,
+					output [20:0] RW0_rdata_3,
+					input   RW0_wmask_0,
+					input   RW0_wmask_1,
+					input   RW0_wmask_2,
+					input   RW0_wmask_3
+				);
+				reg [83:0] ram [63:0];
+			\end{minted}
+		\end{minipage}
+		\column{0.5\textwidth}
+		\begin{minipage}[t][\textheight][l]{\linewidth}
+			\begin{minted}[fontsize=\small, gobble=4, tabsize=2]{verilog}
+				module _T_850( // x4
+					input  [7:0] RW0_addr,
+					input   RW0_en,
+					input   RW0_clk,
+					input   RW0_wmode,
+					input  [63:0] RW0_wdata,
+					output [63:0] RW0_rdata
+				);
+				reg [63:0] ram [255:0];
+			\end{minted}
+		\end{minipage}
+	\end{columns}
+	\end{fullpage}
+\end{frame}
+%}}}
 
 
 %}}} End: section{Structure and Interfaces}

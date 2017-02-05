@@ -1,6 +1,6 @@
 \begin{tikzpicture}[scale=0.3]
 
-	%	\fourwaytrue
+	\fourwaytrue
 
 	\iffourway
 		\pgfmathsetmacro{\ways}{4};
@@ -16,43 +16,44 @@
 		\pgfmathsetmacro{\nBytes}{64};
 	\fi
 
+	\pgfmathsetmacro{\icachex}{0}
+	\pgfmathsetmacro{\icachey}{0}
+	\pgfmathsetmacro{\icacheX}{270}
+	\pgfmathsetmacro{\icacheY}{250}
 
 
-	\node[font=\normalsize] at (40,-10) {\textbf{ICache\_icache}};
-	\draw (0,0) rectangle ++(200,200);
-%	 \draw[->, thick] (-80,190) -- node[above=-2pt, font=\small] {clock}                         ++(80,0);
-%	 \draw[->, thick] (-80,170) -- node[above=-2pt, font=\small] {reset}                         ++(80,0);
-%	 \draw[->, thick] (-80,150) -- node[above=-2pt, font=\small] {io\_req\_valid}                ++(80,0);
-%	 \draw[->, thick] (-80,130) -- node[above=-2pt, font=\small] {io\_req\_bits\_addr}           ++(80,0);
-%	 \draw[->, thick] (-80,110) -- node[above=-2pt, font=\small] {io\_s1\_ppn}                   ++(80,0);
-%	%\draw[->, thick] (-80,130) -- node[above=-2pt, font=\small] {38:0 io\_req\_bits\_addr}      ++(80,0);
-%	%\draw[->, thick] (-80,110) -- node[above=-2pt, font=\small] {19:0 io\_s1\_ppn}              ++(80,0);
-%	 \draw[->, thick] (-80, 90) -- node[above=-2pt, font=\small] {io\_s1\_kill}                  ++(80,0);
-%	 \draw[->, thick] (-80, 70) -- node[above=-2pt, font=\small] {io\_s2\_kill}                  ++(80,0);
-%	 \draw[->, thick] (-80, 50) -- node[above=-2pt, font=\small] {io\_resp\_ready}               ++(80,0);
-%	 \draw[<-, thick] (-80, 30) -- node[above=-2pt, font=\small] {io\_resp\_valid}               ++(80,0);
-%	 \draw[<-, thick] (-80, 10) -- node[above=-2pt, font=\small] {}                              ++(80,0);
-%
-%	 \draw[->, thick] (200,190) -- node[above=-2pt, font=\small] {io\_resp\_bits\_data}          ++(80,0);
-%	 \draw[->, thick] (200,170) -- node[above=-2pt, font=\small] {io\_resp\_bits\_datablock}     ++(80,0);
-%	 \draw[->, thick] (200,150) -- node[above=-2pt, font=\small] {io\_invalidate}                ++(80,0);
-%	 \draw[->, thick] (200,130) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_ready}          ++(80,0);
-%	 \draw[->, thick] (200,110) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_valid}          ++(80,0);
-%	 \draw[->, thick] (200, 90) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_opcode}   ++(80,0);
-%	 \draw[->, thick] (200, 70) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_param}    ++(80,0);
-%	 \draw[->, thick] (200, 50) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_size}     ++(80,0);
-%	 \draw[<-, thick] (200, 30) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_source}   ++(80,0);
-%	 \draw[<-, thick] (200, 10) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_address}  ++(80,0);
-%	 \draw[<-, thick] (200,-10) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_mask}     ++(80,0);
-%	 \draw[<-, thick] (200,-30) -- node[above=-2pt, font=\small] {io\_mem\_0\_a\_bits\_data}     ++(80,0);
+	%\pgfmathsetmacro{\tagArrayx}{90}
+	%\pgfmathsetmacro{\tagArrayy}{100}
+	%\pgfmathsetmacro{\tagArrayX}{140}
+	%\pgfmathsetmacro{\tagArrayY}{156}
+	%\draw (\tagArrayx,\tagArrayy) rectangle (\tagArrayX,\tagArrayY);
+	%\node[font=\normalsize] at (\tagArrayx+25, \tagArrayy-10) {\textbf{tag\_array}};
+	%\draw[<->, thick] (\tagArrayx-35,\tagArrayy+46)  -- node[above=-2pt, font=\small] {en}                      ++(35,0);
+	%\draw[<->, thick] (\tagArrayx-35,\tagArrayy+34)  -- node[above=-2pt, font=\small] {addr}                    ++(35,0);
+	%\draw[<->, thick] (\tagArrayx-35,\tagArrayy+22)  -- node[above=-2pt, font=\small] {wd0..3}                  ++(35,0);
+	%\draw[<->, thick] (\tagArrayx-35,\tagArrayy+10)  -- node[above=-2pt, font=\small] {rd0..3}                  ++(35,0);
 
 
-	\draw[->, thick] (-70,190) -- node[above=-2pt, font=\small] {To Processor}                   ++(70,0);
-	\draw[->, thick] (200,190) -- node[above=-2pt, font=\small] {TileLink\_a}                    ++(60,0);
-	\draw[<-, thick] (200,170) -- node[above=-2pt, font=\small] {TileLink\_b}                    ++(60,0);
-	\draw[->, thick] (200,150) -- node[above=-2pt, font=\small] {TileLink\_c}                    ++(60,0);
-	\draw[<-, thick] (200,130) -- node[above=-2pt, font=\small] {TileLink\_d}                    ++(60,0);
-	\draw[->, thick] (200,110) -- node[above=-2pt, font=\small] {TileLink\_e}                    ++(60,0);
+
+
+%  _T_850 _T_850 (
+%    .RW0_clk(_T_850_RW0_clk),
+%    .RW0_addr(_T_850_RW0_addr),
+%    .RW0_en(_T_850_RW0_en),
+%    .RW0_wmode(_T_850_RW0_wmode),
+%    .RW0_wdata(_T_850_RW0_wdata),
+%    .RW0_rdata(_T_850_RW0_rdata)
+%  );
+
+
+
+
+
+
+
+
+
+	%\node[cloud, cloud puffs=23.5, minimum width=150, minimum height=20, align=center, draw, rotate=90] (cloud) at (30, 100) {Logic};
 
 
 
