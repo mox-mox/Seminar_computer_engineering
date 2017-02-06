@@ -676,11 +676,31 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 %{{{
-\begin{frame}{TileLink}
+\begin{frame}{TileLink: Cache coherence network}
+	\begin{itemize}
+		\item Agents\\
+			\begin{description}
+				\item[Client] Request/hold \$ block
+				\item[Manager] Oversee permission and data flow
+			\end{description}
+		\item Channels\\
+			\begin{description}
+				\item[Aquire] Start read/write uncached
+				\item[Probe] Check if client has \$-block/revoke permissions
+				\item[Release] Free data/write back
+				\item[Grant] Provide data/permissions
+				\item[Finish] Final ACK from requestor
+			\end{description}
+	\end{itemize}
 \end{frame}
 %}}}
 
 
+%{{{
+\begin{frame}{TileLink: Cache coherence network}
+		\inputimage{image3}
+\end{frame}
+%}}}
 
 
 

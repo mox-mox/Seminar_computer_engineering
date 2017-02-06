@@ -1,0 +1,45 @@
+\begin{tikzpicture}[scale=0.3]
+	\tikzset{%
+		mynode/.style={rectangle,rounded corners,draw=black,very thick, inner sep=1em, minimum width=55, text centered},
+		invnode/.style={inner sep=0,minimum size=0}
+	}
+
+
+	\pgfmathsetmacro{\memy}{160};
+	\pgfmathsetmacro{\many}{120};
+	\pgfmathsetmacro{\clay}{ 80};
+	\pgfmathsetmacro{\clby}{ 40};
+	\pgfmathsetmacro{\clcy}{ 00};
+
+
+
+	\node[mynode](mem) at (0,\memy){Memory};
+	\node[mynode](man) at (0,\many){Manager};
+	\node[mynode](cla) at (0,\clay){Client0};
+	\node[mynode](clb) at (0,\clby){Client1};
+	\node[mynode](clc) at (0,\clcy){Client2};
+
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (mem.east) -- ++(300,0);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (man.east) -- ++(300,0);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (cla.east) -- ++(300,0);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (clb.east) -- ++(300,0);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (clc.east) -- ++(300,0);
+
+
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 40, \clay) to node[auto] {A} (50,\many);
+
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 50, \many) to node[auto,swap] {P} (70,\clcy);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 60, \many) to node[auto     ] {P} (70,\clby);
+
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 70, \clby) to node[auto,swap] {P} (80,\many);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 70, \clcy) to node[auto] {P} (90,\many);
+
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 90, \many) to node[auto     ] {A} (100,\memy);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (100, \memy) to node[auto     ] {G} (110,\many);
+
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (110, \many) to node[auto,swap] {G} (120,\clay);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (120, \clay) to node[auto,swap] {F} (130,\many);
+
+
+
+\end{tikzpicture}
