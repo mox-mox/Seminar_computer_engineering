@@ -250,7 +250,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 	\begin{figure}
 		\centering{\includegraphics[width=0.80\pagewidth,height=0.80\pageheight,keepaspectratio]{riscv-logo}}
 		\vspace*{-0.1cm}
-		\source{\cite{riscv_page}}
+		\source{\cite{https://riscv.org}}
 	\end{figure}
 	\begin{columns}
 		\column{0.5\textwidth}
@@ -279,19 +279,15 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		\column{0.3\textwidth}
 	\begin{figure}
 		\centering{\includegraphics[width=0.15\pagewidth,height=0.80\pageheight,keepaspectratio]{lowrisc}}
-		%\vspace*{-0.8cm}
-		%\source{\cite{riscv_page}}
 	\end{figure}
 	\end{columns}
 	\begin{columns}
 		\column{0.3\textwidth}
 	\begin{figure}
 		\centering{\includegraphics[width=0.20\pagewidth,height=0.80\pageheight,keepaspectratio]{sifive}}
-		%\vspace*{-0.8cm}
-		%\source{\cite{riscv_page}}
 	\end{figure}
 		\column{0.7\textwidth}
-		SiFive creates custom silicon
+		SiFive and Open-V create custom silicon
 	\end{columns}
 	\begin{columns}
 		\column{0.7\textwidth}
@@ -299,14 +295,12 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		\column{0.3\textwidth}
 	\begin{figure}
 		\centering{\includegraphics[width=0.20\pagewidth,height=0.80\pageheight,keepaspectratio]{pulp}}
-		%\vspace*{-0.0cm}
-		%\source{\cite{riscv_page}}
 	\end{figure}
 	\end{columns}
 	\begin{columns}
 		\column{0.33\textwidth}
 		\begin{itemize}
-			\item Nvidia replaces Falcon
+			\item Nvidia replaces Falcon processor
 		\end{itemize}
 		\column{0.33\textwidth}
 		\begin{itemize}
@@ -611,7 +605,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 				Write Response & \ldots\_b\_\ldots \\
 				Read Address Channel & \ldots\_ar\_\ldots \\
 				Read Data Channel & \ldots\_r\_\ldots \\
-				Low Power Interface & \ldots\_c\_\ldots \\
+				(Low Power Interface) & \ldots\_c\_\ldots \\
 			\end{tabular}
 		\end{columns}
 	\end{fullpage}
@@ -680,6 +674,18 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \end{frame}
 %}}}
 
+
+%{{{
+\begin{frame}{TileLink}
+\end{frame}
+%}}}
+
+
+
+
+
+
+
 %}}} End: section{Structure and Interfaces}
 
 
@@ -722,14 +728,11 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		Technical Report No. UCB/EECS-2016-17, EECS Department, University of California, Berkeley.\\
 		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
 
-	\bibitem{riscv_page}
-		The official RISC-V webpage\\
-		\url{https://riscv.org}\\
-
 	\bibitem{riscv_users}
 		Some users of the RISC-V ISA\\
 		lowRISC: \url{http://www.lowrisc.org/}; SiFive: \url{https://www.sifive.com/}\\
-		Pulp: \url{http://www.pulp-platform.org}; IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}\\
+		Open-V: \url{https://www.crowdsupply.com/onchip/open-v} Pulp: \url{http://www.pulp-platform.org};\\
+		IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}\\
 		Nvidia: \url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}\\
 		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}\\
 
@@ -748,14 +751,18 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		\url{http://www.lowrisc.org/docs/internship-2016/report}\\
 
 	\bibitem{axi_spec}
-		AMBA® AXI™ and ACE™ Protocol Specification\\
-		ARM Limited 2011\\
+		AMBA® AXI™ and ACE™ Protocol Specification, ARM Limited 2011\\
 		\url{http://infocenter.arm.com/help/topic/com.arm.doc.ihi0022d/index.html}\\
 		\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
 
 	\bibitem{axi_manual}
 		AXI Reference Guide, Xilinx 2011\\
 		\url{http://www.xilinx.com/support/documentation/ip_documentation/ug761_axi_reference_guide.pdf}\\
+
+	\bibitem{tile_link}
+		The TileLink Specification, Version 0.3.3\\
+		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8/pub}
+
 \end{thebibliography}
 %}}}
 

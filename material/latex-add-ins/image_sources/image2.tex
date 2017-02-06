@@ -1,5 +1,4 @@
 \begin{tikzpicture}[scale=0.3]
-
 	\draw[thick] (-50,0) -- ++(50,0) -- ++(0, 220) -- ++(-50,0);
 	\node[font=\normalsize] at (0, -10) {\textbf{ExampleRocketTop}};
 	\node[font=\normalsize, rotate=90] at (-30, 100) {\textbf{RocketChip}};
@@ -9,23 +8,9 @@
 	\draw[<-              ] ( 0, 155)   -- node[above=-2pt, font=\small] {io\_interrupt\_0\_0}        ++(100,0);
 	\draw[<-              ] ( 0, 135)   -- node[above=-2pt, font=\small] {io\_interrupt\_0\_1}        ++(100,0);
 
-	\draw[<->, ultra thick] ( 0,  65)   -- node[above=-2pt, font=\small] {io\_mem\_axi4\_0}           ++(100,0);
-	\draw[<->, ultra thick] ( 0,  45)   -- node[above=-2pt, font=\small] {io\_mio\_axi4\_0}           ++(100,0);
-	\draw[<->, ultra thick] ( 0,  25)   -- node[above=-2pt, font=\small] {io\_l2\_axi4\_0}            ++(100,0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	%\draw[<->, ultra thick] ( 0,  65)   -- node[above=-2pt, font=\small] {io\_l2\_axi4\_0}            ++(100,0);
+	\draw[<->, ultra thick] ( 0,  45)   -- node[above=-2pt, font=\small] {io\_mem\_axi4\_0}           ++(100,0);
+	\draw[<->, ultra thick] ( 0,  25)   -- node[above=-2pt, font=\small] {io\_mio\_axi4\_0}           ++(100,0);
 \end{tikzpicture}
 
 
