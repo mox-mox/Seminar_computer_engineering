@@ -55,6 +55,7 @@
 
 \newcommand{\as}[1]{{\fontspec{ProFontWindows} \textcolor{white}{#1} } }
 \newcommand{\source}[1]{{\caption{\tiny {\fontspec{ProFontWindows} {Source: #1} } } } }
+\newcommand{\sources}[1]{{\caption{\tiny {\fontspec{ProFontWindows} {Sources: #1} } } } }
 \newcommand{\greenbullet}{\textcolor{bettergreen}\textbullet}
 %\newcommand{\greencirc}{\textcolor{bettergreen} $ \circ $}
 \newcommand{\greencirc}{$ \circ $ }
@@ -246,7 +247,79 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 %{{{
 \begin{frame}{What is RISCV?}
-	Open source ISA...
+	\begin{figure}
+		\centering{\includegraphics[width=0.80\pagewidth,height=0.80\pageheight,keepaspectratio]{riscv-logo}}
+		\vspace*{-0.1cm}
+		\source{\cite{riscv_page}}
+	\end{figure}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{itemize}
+			\item Open-source Instruction Set Architecture (ISA)
+			\item One ISA to cover all computer devices
+			\item 3 ISAs (32-128 bits)
+			\item Meant for implementation
+		\end{itemize}
+		\column{0.5\textwidth}
+		\begin{itemize}
+			\item Modular
+			\item Extensible
+			\item Actively developed
+			\item A good investment?
+		\end{itemize}
+	\end{columns}
+\end{frame}
+%}}}
+
+%{{{
+\begin{frame}{Why should I care?}
+	\begin{columns}
+		\column{0.7\textwidth}
+		lowRISC aims to create the processor pendant of linux
+		\column{0.3\textwidth}
+	\begin{figure}
+		\centering{\includegraphics[width=0.15\pagewidth,height=0.80\pageheight,keepaspectratio]{lowrisc}}
+		%\vspace*{-0.8cm}
+		%\source{\cite{riscv_page}}
+	\end{figure}
+	\end{columns}
+	\begin{columns}
+		\column{0.3\textwidth}
+	\begin{figure}
+		\centering{\includegraphics[width=0.20\pagewidth,height=0.80\pageheight,keepaspectratio]{sifive}}
+		%\vspace*{-0.8cm}
+		%\source{\cite{riscv_page}}
+	\end{figure}
+		\column{0.7\textwidth}
+		SiFive creates custom silicon
+	\end{columns}
+	\begin{columns}
+		\column{0.7\textwidth}
+		ETH Zurich and Università di Bologna create a state of the art microcontroller
+		\column{0.3\textwidth}
+	\begin{figure}
+		\centering{\includegraphics[width=0.20\pagewidth,height=0.80\pageheight,keepaspectratio]{pulp}}
+		%\vspace*{-0.0cm}
+		%\source{\cite{riscv_page}}
+	\end{figure}
+	\end{columns}
+	\begin{columns}
+		\column{0.33\textwidth}
+		\begin{itemize}
+			\item Nvidia replaces Falcon
+		\end{itemize}
+		\column{0.33\textwidth}
+		\begin{itemize}
+			\item IIT Madras creates a processor
+		\end{itemize}
+		\column{0.33\textwidth}
+		\begin{itemize}
+			\item UC Berkeley uses it for reasearch
+		\end{itemize}
+	\end{columns}
+	\begin{figure}
+		\sources{\cite{riscv_users}}
+	\end{figure}
 \end{frame}
 %}}}
 
@@ -264,7 +337,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		\includegraphics[width=0.90\pagewidth,height=0.80\pageheight,keepaspectratio]{EECS-2016-17_fig1}
 		}
 		\vspace*{-1cm}
-		%\hspace*{-1cm}\source{adsfasfasdfasfafdasdfasdf}
 		\source{\cite{rc_paper}}
 	\end{figure}
 \end{frame}
@@ -366,7 +438,8 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 			class WithL1ICacheSets(sets:Int) extends Config((site,here,up)=>{
 			 case CacheName("L1I")=>up(CacheName("L1I"), site).copy(nSets=sets)
 			}) // Likewise for nWays
-			class WithCacheBlockBytes(linesize:Int) extends Config((site,here,up)=>{
+			class WithCacheBlockBytes(linesize:Int)
+											extends Config((site,here,up)=>{
 			 case CacheBlockBytes => linesize
 			})
 		\end{minted}
@@ -389,8 +462,9 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 				++ new WithL1ICacheSets(64) ++ new WithCacheBlockBytes(32)
 				++ new WithL2Cache ++ new BaseConfig)
 		\end{minted}
-		pause
+		\pause
 		\begin{minted}[fontsize=\small, gobble=3]{bash}
+			...
 			cd rocket-chip/vsim
 			make -j5 CONFIG=DualCoreConfig2way
 			...
@@ -517,13 +591,39 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 %Note: AXI4... does not mean axi for ... but is the protocol version, AXI4.
 
 %{{{
+\begin{frame}{RocketChip Interfaces}
+	\begin{fullpage}
+		\begin{columns}
+			\column{0.4\textwidth}
+			\inputimage{image2}
+			\column{0.6\textwidth}
+			\pause
+			\begin{itemize}
+				\item 282 signals per AXI interface
+				\item io\_l2\_axi4\_0 optional
+			\end{itemize}
+			\vspace{5mm}
+			\begin{tabular}{l|l}
+				Signal Bundle & Prefix\\
+				\hline
+				Write Address Channel & \ldots\_aw\_\ldots \\
+				Write Data Channel & \ldots\_w\_\ldots \\
+				Write Response & \ldots\_b\_\ldots \\
+				Read Address Channel & \ldots\_ar\_\ldots \\
+				Read Data Channel & \ldots\_r\_\ldots \\
+				Low Power Interface & \ldots\_c\_\ldots \\
+			\end{tabular}
+		\end{columns}
+	\end{fullpage}
+\end{frame}
+%}}}
+
+
+%{{{
 \begin{frame}{AXI-Interface}
 	\begin{figure}
-		\centering{
-			\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{augmented_arch_edit}
-		}
+		\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{augmented_arch_edit}
 		\vspace*{-0.6cm}
-		%\hspace*{-1cm}\source{adsfasfasdfasfafdasdfasdf}
 		\source{Clipped from \cite{lowrisc_techreport}}
 	\end{figure}
 \end{frame}
@@ -543,7 +643,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 %{{{
-\begin{frame}[fragile]{Comparison of SPI an \twi}
+\begin{frame}[fragile]{TODO}
 \end{frame}
 %}}}
 
@@ -558,24 +658,44 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \center{References}
 \tiny
 \begin{thebibliography}{9}
-	\bibitem{rc_papwer}
+	\bibitem{rc_paper}
 		Asanović, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
 		The Rocket Chip Generator.\\
 		Technical Report No. UCB/EECS-2016-17, EECS Department, University of California, Berkeley.\\
 		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
+
+	\bibitem{riscv_page}
+		The official RISC-V webpage\\
+		\url{https://riscv.org}\\
+
+	\bibitem{riscv_users}
+		Some users of the RISC-V ISA
+		lowRISC: \url{http://www.lowrisc.org/}\\
+		SiFive: \url{https://www.sifive.com/}\\
+		Pulp: \url{http://www.pulp-platform.org}\\
+		Nvidia: \url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}\\
+		IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}\\
+		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}\\
+
 	\bibitem{rc_github}
 		The RocketChip github pages\\
 		\url{https://github.com/ucb-bar/rocket-chip}\\
 		\url{https://github.com/ucb-bar/project-template}\\
-	\bibitem{boom_github}
-		The Berkely Out Of Order Machine github page\\
-		\url{https://github.com/ucb-bar/riscv-boom}\\
 
+	\bibitem{boom_github}
+		The Berkeley Out Of Order Machine github page\\
+		\url{https://github.com/ucb-bar/riscv-boom}\\
 
 	\bibitem{lowrisc_techreport}
 		Xuan Guo, Nathanael Davison, Profir-Petru Partachi, Alistair Fisher (2016)\\
 		Technical report from the lowRISC Summer Internship 2016\\
 		\url{http://www.lowrisc.org/docs/internship-2016/report}\\
+
+	\bibitem{axi_spec}
+		AMBA® AXI™ and ACE™ Protocol Specification\\
+		ARM Limited 2011\\
+		\url{http://infocenter.arm.com/help/topic/com.arm.doc.ihi0022d/index.html}\\
+		\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
 
 
 
@@ -588,9 +708,8 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 %{{{ END
 
-\begin{frame}
-	{\Huge End}
-	Any Questions?
+\begin{frame}{\Huge End}
+	\huge Time for your questions
 \end{frame}
 %}}}
 
