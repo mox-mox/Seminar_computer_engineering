@@ -620,18 +620,63 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 %{{{
-\begin{frame}{AXI-Interface}
+\begin{frame}{AXI Read}
+	%\begin{fullpage}
+	\begin{figure}
+		\includegraphics[width=0.9\textwidth,height=0.8\textheight,keepaspectratio]{axi_read}
+		%\vspace*{-0.6cm}
+		\source{Taken from \cite{axi_manual}}
+	\end{figure}
+	%\end{fullpage}
+\end{frame}
+%}}}
+
+
+%{{{
+\begin{frame}{AXI Write}
+	%\begin{fullpage}
+	\begin{figure}
+		\includegraphics[width=0.9\textwidth,height=0.8\textheight,keepaspectratio]{axi_write}
+		%\vspace*{-0.6cm}
+		\source{Taken from \cite{axi_manual}}
+	\end{figure}
+	%\end{fullpage}
+\end{frame}
+%}}}
+
+%{{{
+\begin{frame}{AXI Features}
+	%\begin{fullpage}
+		\begin{columns}
+			\column{0.47\textwidth}
+			\begin{itemize}
+				\item Handshake on all channels
+				\item Burst up to 256 transfers
+				\item Memory attributes
+				\item Transaction buffering
+			\end{itemize}
+			\column{0.6\textwidth}
+			\begin{itemize}
+				\item Privileged, secure, instruction bits
+				\item Transaction IDs
+				\item Atomicy size
+				\item Exclusive Access
+				\item Quality of Service signals
+			\end{itemize}
+		\end{columns}
+	%\end{fullpage}
+\end{frame}
+%}}}
+
+
+
+%{{{
+\begin{frame}{RocketChip Interfaces}
 	\begin{figure}
 		\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{augmented_arch_edit}
 		\vspace*{-0.6cm}
 		\source{Clipped from \cite{lowrisc_techreport}}
 	\end{figure}
-\end{frame}
-%}}}
-
-%{{{
-\begin{frame}{Title}
-	TODO
 \end{frame}
 %}}}
 
@@ -643,14 +688,27 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 %{{{
-\begin{frame}[fragile]{TODO}
+\begin{frame}{Conclusion}
+		\begin{columns}
+			\column{0.5\textwidth}
+			\begin{itemize}
+				\item RISC-V is here to stay
+				\item RocketChip generats SoC
+				\item Can use Rocket or Boom
+				\item Lots of configuration options
+			\end{itemize}
+			\column{0.5\textwidth}
+			\begin{itemize}
+				\item Chisel is hard to read
+				\item Generated Verilog is worse
+				\item RocketChip exposes AXI
+				\item Many standard AXI IP
+			\end{itemize}
+		\end{columns}
 \end{frame}
 %}}}
 
 %}}} End: section{}
-
-
-
 
 
 %{{{ References
@@ -669,12 +727,10 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		\url{https://riscv.org}\\
 
 	\bibitem{riscv_users}
-		Some users of the RISC-V ISA
-		lowRISC: \url{http://www.lowrisc.org/}\\
-		SiFive: \url{https://www.sifive.com/}\\
-		Pulp: \url{http://www.pulp-platform.org}\\
+		Some users of the RISC-V ISA\\
+		lowRISC: \url{http://www.lowrisc.org/}; SiFive: \url{https://www.sifive.com/}\\
+		Pulp: \url{http://www.pulp-platform.org}; IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}\\
 		Nvidia: \url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}\\
-		IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}\\
 		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}\\
 
 	\bibitem{rc_github}
@@ -697,12 +753,9 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		\url{http://infocenter.arm.com/help/topic/com.arm.doc.ihi0022d/index.html}\\
 		\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
 
-
-
-
-
-
-
+	\bibitem{axi_manual}
+		AXI Reference Guide, Xilinx 2011\\
+		\url{http://www.xilinx.com/support/documentation/ip_documentation/ug761_axi_reference_guide.pdf}\\
 \end{thebibliography}
 %}}}
 
