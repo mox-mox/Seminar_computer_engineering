@@ -300,7 +300,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 	\begin{columns}
 		\column{0.33\textwidth}
 		\begin{itemize}
-			\item Nvidia replaces Falcon processor
+			\item NVIDIA replaces Falcon processor
 		\end{itemize}
 		\column{0.33\textwidth}
 		\begin{itemize}
@@ -444,7 +444,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 %{{{
 \begin{frame}[fragile]{How to configure RocketChip? /2}
 	\begin{fullpage}
-	\$(ROCKET-CHIP)/src/main/scala/rocketchip
+	\$(ROCKET-CHIP)/src/main/scala/rocketchip/Configs.scala
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{java}
 			class DualCoreConfig2way extends Config(
 				new WithNCores(2) ++ new WithL1ICacheWays(2)
@@ -615,36 +615,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \end{frame}
 %}}}
 
-%
-%%{{{
-%\begin{frame}{RocketChip Interface Signals}
-%	\begin{fullpage}
-%		\small
-%		\begin{columns}
-%			\column{0.5\textwidth}
-%			TileLink
-%			\begin{tabular}{l|l}
-%				Signal Bundle & Prefix\\
-%				\hline
-%			\end{tabular}
-%			\column{0.5\textwidth}
-%			AXI4
-%			\begin{tabular}{l|l}
-%				Signal Bundle & Prefix\\
-%				\hline
-%				Write Address Channel & \ldots\_aw\_\ldots \\
-%				Write Data Channel & \ldots\_w\_\ldots \\
-%				Write Response & \ldots\_b\_\ldots \\
-%				Read Address Channel & \ldots\_ar\_\ldots \\
-%				Read Data Channel & \ldots\_r\_\ldots \\
-%				(Low Power Interface) & \ldots\_c\_\ldots \\
-%			\end{tabular}
-%		\end{columns}
-%	\end{fullpage}
-%\end{frame}
-%%}}}
-%
-
 %{{{
 \begin{frame}{AXI Read}
 	%\begin{fullpage}
@@ -675,17 +645,17 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		\begin{columns}
 			\column{0.47\textwidth}
 			\begin{itemize}
-				\item Handshake on all channels
+				%\item Handshake on all channels
 				\item Burst up to 256 transfers
 				\item Memory attributes
 				\item Transaction buffering
+				\item Privileged, secure, instruction bits
 			\end{itemize}
 			\column{0.6\textwidth}
 			\begin{itemize}
-				\item Privileged, secure, instruction bits
 				\item Transaction IDs
-				\item Atomicy size
 				\item Exclusive Access
+				\item Atomicy size
 				\item Quality of Service signals
 			\end{itemize}
 		\end{columns}
@@ -696,7 +666,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 %{{{
-\begin{frame}{TileLink: Cache coherence network}
+\begin{frame}{TileLink: Inter-tile cache coherence network}
 	\begin{itemize}
 		\item Agents\\
 			\begin{description}
@@ -717,7 +687,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 %}}}
 
 %{{{
-\begin{frame}{TileLink: Cache coherence network}
+\begin{frame}{TileLink: Operations}
 	\begin{fullpage}
 	%{{{
 		\only<1>{%
@@ -786,7 +756,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 			\column{0.5\textwidth}
 			\begin{itemize}
 				\item RISC-V is here to stay
-				\item RocketChip generats SoC
+				\item RocketChip generates SoC
 				\item Can use Rocket or Boom
 				\item Lots of configuration options
 			\end{itemize}
@@ -849,8 +819,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 	\bibitem{tile_link}
 		The TileLink Specification, Version 0.3.3\\
-		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8/pub}
-
+		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8/pub}\\
 \end{thebibliography}
 %}}}
 
