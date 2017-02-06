@@ -1,4 +1,6 @@
 \begin{tikzpicture}[scale=0.3]
+	%\showwbtrue
+	%\showreqtrue
 	\tikzset{%
 		mynode/.style={rectangle,rounded corners,draw=black,very thick, inner sep=1em, minimum width=55, text centered},
 		invnode/.style={inner sep=0,minimum size=0}
@@ -26,19 +28,36 @@
 	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick, dashed] (clc.east) -- ++(300,0);
 
 
+	\ifshowreq
 	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 40, \clay) to node[auto] {A} (50,\many);
-
 	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 50, \many) to node[auto,swap] {P} (70,\clcy);
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 60, \many) to node[auto     ] {P} (70,\clby);
-
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 70, \clby) to node[auto,swap] {P} (80,\many);
-	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 70, \clcy) to node[auto] {P} (90,\many);
-
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 60, \many) to node[auto     ] { } (70,\clby);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 70, \clby) to node[auto]      { } (80,\many);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 70, \clcy) to node[auto,swap] {R} (90,\many);
 	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] ( 90, \many) to node[auto     ] {A} (100,\memy);
 	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (100, \memy) to node[auto     ] {G} (110,\many);
-
 	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (110, \many) to node[auto,swap] {G} (120,\clay);
 	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (120, \clay) to node[auto,swap] {F} (130,\many);
+
+	\node[font=\normalsize] at (80, -20) {\textbf{Request}};
+	\fi
+
+	\node[invnode] at (150, 190) {};
+	\node[invnode] at (150, -30) {};
+
+	\ifshowwb
+	\draw[              shorten >=2pt, shorten <=2pt, thick, dashed] (150, -20) -- ++(0,200);
+
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (170, \clay) to node[auto     ] {R} (180,\many);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (180, \many) to node[auto     ] {R} (190,\memy);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (190, \memy) to node[auto     ] {G} (200,\many);
+	\draw[->, >=latex', shorten >=2pt, shorten <=2pt, thick] (200, \many) to node[auto     ] {G} (210,\clay);
+
+	\node[font=\normalsize] at (190, -20) {\textbf{Release}};
+	\fi
+
+
+
 
 
 

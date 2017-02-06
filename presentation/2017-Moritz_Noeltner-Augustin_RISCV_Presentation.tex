@@ -250,7 +250,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 	\begin{figure}
 		\centering{\includegraphics[width=0.80\pagewidth,height=0.80\pageheight,keepaspectratio]{riscv-logo}}
 		\vspace*{-0.1cm}
-		\source{\cite{https://riscv.org}}
+		\source{\url{https://riscv.org}}
 	\end{figure}
 	\begin{columns}
 		\column{0.5\textwidth}
@@ -587,12 +587,15 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 %{{{
 \begin{frame}{RocketChip Interfaces}
 	\begin{fullpage}
+		\small
 		\begin{columns}
-			\column{0.4\textwidth}
+			\column{0.45\textwidth}
 			\inputimage{image2}
-			\column{0.6\textwidth}
+			\column{0.55\textwidth}
 			\pause
 			\begin{itemize}
+				\item 451 signals per TileLink
+				\item TileLink: Data + Opcode
 				\item 282 signals per AXI interface
 				\item io\_l2\_axi4\_0 optional
 			\end{itemize}
@@ -612,6 +615,35 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \end{frame}
 %}}}
 
+%
+%%{{{
+%\begin{frame}{RocketChip Interface Signals}
+%	\begin{fullpage}
+%		\small
+%		\begin{columns}
+%			\column{0.5\textwidth}
+%			TileLink
+%			\begin{tabular}{l|l}
+%				Signal Bundle & Prefix\\
+%				\hline
+%			\end{tabular}
+%			\column{0.5\textwidth}
+%			AXI4
+%			\begin{tabular}{l|l}
+%				Signal Bundle & Prefix\\
+%				\hline
+%				Write Address Channel & \ldots\_aw\_\ldots \\
+%				Write Data Channel & \ldots\_w\_\ldots \\
+%				Write Response & \ldots\_b\_\ldots \\
+%				Read Address Channel & \ldots\_ar\_\ldots \\
+%				Read Data Channel & \ldots\_r\_\ldots \\
+%				(Low Power Interface) & \ldots\_c\_\ldots \\
+%			\end{tabular}
+%		\end{columns}
+%	\end{fullpage}
+%\end{frame}
+%%}}}
+%
 
 %{{{
 \begin{frame}{AXI Read}
@@ -624,7 +656,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 	%\end{fullpage}
 \end{frame}
 %}}}
-
 
 %{{{
 \begin{frame}{AXI Write}
@@ -665,17 +696,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 
 %{{{
-\begin{frame}{RocketChip Interfaces}
-	\begin{figure}
-		\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{augmented_arch_edit}
-		\vspace*{-0.6cm}
-		\source{Clipped from \cite{lowrisc_techreport}}
-	\end{figure}
-\end{frame}
-%}}}
-
-
-%{{{
 \begin{frame}{TileLink: Cache coherence network}
 	\begin{itemize}
 		\item Agents\\
@@ -689,21 +709,68 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 				\item[Probe] Check if client has \$-block/revoke permissions
 				\item[Release] Free data/write back
 				\item[Grant] Provide data/permissions
-				\item[Finish] Final ACK from requestor
+				\item[Finish] Final acknowledgement from requestor
 			\end{description}
+			Refer to the specification for definitions of the exact operations
 	\end{itemize}
 \end{frame}
 %}}}
 
-
 %{{{
 \begin{frame}{TileLink: Cache coherence network}
-		\inputimage{image3}
+	\begin{fullpage}
+	%{{{
+		\only<1>{%
+			\begin{figure}
+				\showreqfalse
+				\showwbfalse
+				%\centering
+				\inputimage{image3}%
+			\end{figure}
+		}
+	%}}}
+	%{{{
+		\only<2>{%
+			\begin{figure}
+				\showreqtrue
+				\showwbfalse
+				%\centering
+				\inputimage{image3}%
+			\end{figure}
+		}
+	%}}}
+	%{{{
+		\only<3-4>{%
+			\begin{figure}
+				\showreqtrue
+				\showwbtrue
+				%\centering
+				\inputimage{image3}%
+			\end{figure}
+		}
+	%}}}
+	\pause
+	\pause
+	\pause
+	\begin{description}
+		\item[Manager] Don't accept transactions for in-flight blocks
+		\item[Client] Don't release block with outstanding voluntary write-back
+	\end{description}
+	\end{fullpage}
 \end{frame}
 %}}}
 
 
 
+%{{{
+\begin{frame}{RocketChip Interfaces}
+	\begin{figure}
+		\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{augmented_arch_edit}
+		\vspace*{-0.6cm}
+		\source{Clipped from \cite{lowrisc_techreport}}
+	\end{figure}
+\end{frame}
+%}}}
 
 
 %}}} End: section{Structure and Interfaces}
@@ -742,12 +809,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \center{References}
 \tiny
 \begin{thebibliography}{9}
-	\bibitem{rc_paper}
-		Asanović, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
-		The Rocket Chip Generator.\\
-		Technical Report No. UCB/EECS-2016-17, EECS Department, University of California, Berkeley.\\
-		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
-
 	\bibitem{riscv_users}
 		Some users of the RISC-V ISA\\
 		lowRISC: \url{http://www.lowrisc.org/}; SiFive: \url{https://www.sifive.com/}\\
@@ -755,6 +816,12 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}\\
 		Nvidia: \url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}\\
 		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}\\
+
+	\bibitem{rc_paper}
+		Asanović, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
+		The Rocket Chip Generator.\\
+		Technical Report No. UCB/EECS-2016-17, EECS Department, University of California, Berkeley.\\
+		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
 
 	\bibitem{rc_github}
 		The RocketChip github pages\\
@@ -764,6 +831,10 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 	\bibitem{boom_github}
 		The Berkeley Out Of Order Machine github page\\
 		\url{https://github.com/ucb-bar/riscv-boom}\\
+
+	\bibitem{axi_manual}
+		AXI Reference Guide, Xilinx 2011\\
+		\url{http://www.xilinx.com/support/documentation/ip_documentation/ug761_axi_reference_guide.pdf}\\
 
 	\bibitem{lowrisc_techreport}
 		Xuan Guo, Nathanael Davison, Profir-Petru Partachi, Alistair Fisher (2016)\\
@@ -775,9 +846,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 		\url{http://infocenter.arm.com/help/topic/com.arm.doc.ihi0022d/index.html}\\
 		\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
 
-	\bibitem{axi_manual}
-		AXI Reference Guide, Xilinx 2011\\
-		\url{http://www.xilinx.com/support/documentation/ip_documentation/ug761_axi_reference_guide.pdf}\\
 
 	\bibitem{tile_link}
 		The TileLink Specification, Version 0.3.3\\

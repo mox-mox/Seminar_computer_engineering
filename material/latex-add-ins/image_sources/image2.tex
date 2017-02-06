@@ -1,7 +1,7 @@
 \begin{tikzpicture}[scale=0.3]
-	\draw[thick] (-50,0) -- ++(50,0) -- ++(0, 220) -- ++(-50,0);
-	\node[font=\normalsize] at (0, -10) {\textbf{ExampleRocketTop}};
-	\node[font=\normalsize, rotate=90] at (-30, 100) {\textbf{RocketChip}};
+	\draw[thick] (-70,0) -- ++(70,0) -- ++(0, 220) -- ++(-70,0);
+	\node[font=\normalsize] at (-10, -10) {\textbf{ExampleRocketTop}};
+	%\node[font=\normalsize, rotate=90] at (-30, 100) {\textbf{RocketChip}};
 
 	\draw[<-              ] ( 0, 195)   -- node[above=-2pt, font=\small] {clock}                      ++(100,0);
 	\draw[<-              ] ( 0, 175)   -- node[above=-2pt, font=\small] {reset}                      ++(100,0);
@@ -11,6 +11,9 @@
 	%\draw[<->, ultra thick] ( 0,  65)   -- node[above=-2pt, font=\small] {io\_l2\_axi4\_0}            ++(100,0);
 	\draw[<->, ultra thick] ( 0,  45)   -- node[above=-2pt, font=\small] {io\_mem\_axi4\_0}           ++(100,0);
 	\draw[<->, ultra thick] ( 0,  25)   -- node[above=-2pt, font=\small] {io\_mio\_axi4\_0}           ++(100,0);
+
+	\draw[<->, ultra thick] ( 0,  45)   -- node[above=-2pt, font=\small] {TileLink}                   ++(-50,0);
+	\draw[<->, ultra thick] ( 0,  25)   -- node[above=-2pt, font=\small] {TileLink}                   ++(-50,0);
 \end{tikzpicture}
 
 
