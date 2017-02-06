@@ -160,13 +160,6 @@
 
 %{{{ Tkz drawing package
 
-%{{{ Spider diagram
-
-%\usepackage{tkz-kiviat,numprint,fullpage}
-\usepackage{tkz-kiviat,numprint}
-\usetikzlibrary{arrows}
-%}}}
-
 %{{{ Block diagram
 
 \usepackage{tikz}
@@ -257,42 +250,52 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \end{frame}
 %}}}
 
-%{{{
-\begin{frame}{What is RocketChip?}
-	\centering
-	\includegraphics[width=0.90\pagewidth,height=0.80\pageheight,keepaspectratio]{EECS-2016-17_fig1}
-\end{frame}
-%}}}
-
-%{{{
-\begin{frame}[fragile]{How can I "use" RocketChip?}
-	\begin{minipage}[c][.4\textheight][c]{\linewidth}
-		\begin{minted}[fontsize=\small, gobble=3]{bash}
-			git clone https://github.com/ucb-bar/rocket-chip.git
-			cd rocket-chip
-			#git checkout boom
-			git submodule update --init --recursive
-			# Now the repo is about 3GB
-			cd riscv-tools
-			export RISCV=/path/to/toolchain/install
-			export PATH="${PATH}:$RISCV/bin"
-			./build.sh # Takes about 45 min
-			# The toolchain is another 800MB
-			cd ../emulator
-			make run CONFIG=BOOMConfig
-			make run CONFIG=ExampleSmallConfig
-			cd ../vsim
-			make -jN CONFIG=ExampleSmallConfig # about 20 min
-		\end{minted}
-	\end{minipage}
-\end{frame}
-%}}}
 
 %}}} End: section{Introduction}
 
 
 %{{{
 \section{Structure}
+
+%{{{
+\begin{frame}{What is RocketChip?}
+	\begin{figure}
+		\centering{
+		\includegraphics[width=0.90\pagewidth,height=0.80\pageheight,keepaspectratio]{EECS-2016-17_fig1}
+		}
+		\vspace*{-1cm}
+		%\hspace*{-1cm}\source{adsfasfasdfasfafdasdfasdf}
+		\source{\cite{rc_paper}}
+	\end{figure}
+\end{frame}
+%}}}
+
+%{{{
+\begin{frame}[fragile]{How can I "use" RocketChip?}
+	%\begin{minipage}[c][.4\textheight][c]{\linewidth}
+		\begin{figure}
+			\begin{minted}[fontsize=\small, gobble=4]{bash}
+				git clone https://github.com/ucb-bar/rocket-chip.git
+				cd rocket-chip
+				#git checkout boom
+				git submodule update --init --recursive
+				# Now the repo is about 3GB
+				cd riscv-tools
+				export RISCV=/path/to/toolchain/install
+				export PATH="${PATH}:$RISCV/bin"
+				./build.sh # Takes about 45 min
+				# The toolchain is another 800MB
+				cd ../emulator
+				make run CONFIG=BOOMConfig
+				make run CONFIG=ExampleSmallConfig
+				cd ../vsim
+				make -jN CONFIG=ExampleSmallConfig # about 20 min
+			\end{minted}
+			\source{Collected from \cite{rc_github} and \cite{boom_github}}
+		\end{figure}
+	%\end{minipage}
+\end{frame}
+%}}}
 
 %{{{
 \begin{frame}[fragile]{What can be configured?}
@@ -346,38 +349,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \end{frame}
 %}}}
 
-%
-%%{{{
-%\begin{frame}[fragile]{How can I configure the chip?}
-%	\begin{minted}[fontsize=\small, gobble=1, tabsize=2]{java}
-%	class BaseCoreplexConfig extends Config ((site, here, up) => {
-%		case CacheName("L1I") => CacheConfig(
-%			nSets         = 64,
-%			nWays         = 4,
-%			rowBits       = site(L1toL2Config).beatBytes*8,
-%			nTLBEntries   = 8,
-%			cacheIdBits   = 0,
-%			splitMetadata = false)
-%	\end{minted}
-%	\pause
-%	\begin{minted}[fontsize=\small, gobble=1, tabsize=2]{java}
-%	...
-%	class WithL1ICacheSets(sets: Int)
-%		extends Config((site,here,up) => {
-%		case CacheName("L1I") =>
-%			up(CacheName("L1I"),site).copy(nSets=sets)
-%	})
-%	\end{minted}
-%	\pause
-%	\begin{minted}[fontsize=\small, gobble=1, tabsize=2]{java}
-%	...
-%	class DualCoreConfig2way32sets extends Config(
-%		new WithNCores(2)++new WithL1ICacheSets(32)++new BaseConfig)
-%	\end{minted}
-%\end{frame}
-%%}}}
-%
-
 %{{{
 \begin{frame}[fragile]{How to configure RocketChip? /1}
 	\begin{fullpage}
@@ -430,7 +401,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 %}}}
 
 %{{{
-\begin{frame}{Cache Example, 2-Way /1}
+\begin{frame}{Cache Example, 2-Way}
 	\begin{fullpage}
 		\fourwayfalse
 		%\centering
@@ -440,7 +411,7 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 %}}}
 
 %{{{
-\begin{frame}{Cache Example, 4-Way /1}
+\begin{frame}{Cache Example, 4-Way}
 	\begin{fullpage}
 		\fourwaytrue
 		%\centering
@@ -448,7 +419,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 	\end{fullpage}
 \end{frame}
 %}}}
-
 
 %{{{
 \begin{frame}[fragile,t]{Results: Module ICache\_icache (2 ways, 32 sets, 64 bytes)}
@@ -490,7 +460,6 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 	\end{fullpage}
 \end{frame}
 %}}}
-
 
 %{{{
 \begin{frame}[fragile,t]{Results: Module ICache\_icache (4 ways, 64 sets, 32 bytes)}
@@ -545,11 +514,18 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 
 %{{{
 \section{Interfaces}
+%Note: AXI4... does not mean axi for ... but is the protocol version, AXI4.
 
 %{{{
 \begin{frame}{AXI-Interface}
-	Note: AXI4... does not mean axi for ... but is the protocol version, AXI4.
-	TODO
+	\begin{figure}
+		\centering{
+			\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{augmented_arch_edit}
+		}
+		\vspace*{-0.6cm}
+		%\hspace*{-1cm}\source{adsfasfasdfasfafdasdfasdf}
+		\source{Clipped from \cite{lowrisc_techreport}}
+	\end{figure}
 \end{frame}
 %}}}
 
@@ -582,10 +558,30 @@ postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
 \center{References}
 \tiny
 \begin{thebibliography}{9}
-	\bibitem{spi_mc68hc11a8}
-		Datasheet of the Motorola MC68HC11A8 microcontroller describing the SPI bus.\\
-		Last downloaded 2014-01-10\\
-		\url{http://cache.freescale.com/files/microcontrollers/doc/data_sheet/MC68HC11A8.pdf}
+	\bibitem{rc_papwer}
+		Asanović, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
+		The Rocket Chip Generator.\\
+		Technical Report No. UCB/EECS-2016-17, EECS Department, University of California, Berkeley.\\
+		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
+	\bibitem{rc_github}
+		The RocketChip github pages\\
+		\url{https://github.com/ucb-bar/rocket-chip}\\
+		\url{https://github.com/ucb-bar/project-template}\\
+	\bibitem{boom_github}
+		The Berkely Out Of Order Machine github page\\
+		\url{https://github.com/ucb-bar/riscv-boom}\\
+
+
+	\bibitem{lowrisc_techreport}
+		Xuan Guo, Nathanael Davison, Profir-Petru Partachi, Alistair Fisher (2016)\\
+		Technical report from the lowRISC Summer Internship 2016\\
+		\url{http://www.lowrisc.org/docs/internship-2016/report}\\
+
+
+
+
+
+
 
 \end{thebibliography}
 %}}}
