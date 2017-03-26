@@ -2,7 +2,6 @@
 %{{{ Preamble
 
 \documentclass[journal,a4paper]{IEEEtran}
-\hyphenation{op-tical net-works semi-conduc-tor}
 
 %{{{ Packages
 
@@ -48,18 +47,19 @@
 %{{{ Avebritations
 
 \def\krste/{Krste Asanovi\'c}
-\def\CC/{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\textbf{+}}\nolinebreak\hspace{-.03em}\raisebox{.4ex}{\tiny\textbf{+}}}
+\def\CC/{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\textbf{+}}\nolinebreak\hspace{-.03em}\raisebox{.4ex}{\tiny\textbf{+} } }
+%}}}
+
+%{{{ Some hacks
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+\addto\captionsenglish{\renewcommand\tablename{Listing}} %Use the table environment for code listings
+%}}}
+
 %}}}
 
 
 
-%}}}
-
-
-
-\addto\captionsenglish{%
-  \renewcommand\tablename{Listing}%
-}
 
 
 
@@ -105,31 +105,28 @@ University of Heidelberg, ZITI}
 %{{{
 \section{Introduction}
 \IEEEPARstart{C}{omputer} technology has seen the rise and fall of many instruction set architectures (ISAs) over time.
-Proprietary ISAs not only lead to fragmentation of the CPU market, but are also vulnerable to extinction when their proprietor companies run into financial troubles.
-Along with design complexity and licensing issues, these considerations led \krste/ et al.\ to decide upon creating a new and free ISA for their next round of research projects at the University of California Berkeley (UCB).
+Proprietary ISAs not only lead to fragmentation of the CPU market as companies cannot easily use the already existing ISAs of their competitors, but are also vulnerable to extinction when their proprietor companies run into financial troubles.
+Along with design complexity and licensing issues, these considerations led \krste/ et al.\ in 2010 to decide upon creating a new and free ISA for their next round of research projects at the University of California Berkeley (UCB).
 This fifth reduced instruction set ISA developed at UCB, called RISC-V, is --unlike its predecessors-- not only meant for teaching but also actual implementation.
-With three supported word-widths (32, 64 and 128 bits), RISC-V is aimed at all possible computational environments ranging from small embedded systems up to full scale supercomputers.
-To facilitate widespread adoption, the ISA is licensed permissively, allowing use for academic and commercial use in open- and closed-source designs free of charge and now, roughly 4 years after its inception, RISC-V is used in a number of roles:
+With three supported word-widths (32, 64 and 128 bits\cite{riscv}), RISC-V is aimed at all possible computational environments ranging from small embedded systems up to full scale supercomputers.
+To facilitate widespread adoption, the ISA is licensed permissively, allowing use for academic and commercial use in open- and closed-source designs free of charge and now, roughly 6 years after its inception, RISC-V is used in a number of roles:
+
+%{{{ RISCV adopters TODO: citations
 
 \begin{itemize}
-	\item The LowRISC project aims to become the ``linux of the hardware word''
-	\item SiFive and Open-V are creating custom silicon products
-	\item ETH Zurich and Università di Bologna cooperate to create a state-of-the-art parallel microcontroller
-	\item IIT Madras creates a processor
-	\item NVIDIA will use the RISC-V ISA for the replacement of their Falcon processor
-	\item UCB uses RISC-V processors for research purposes as well as for teaching
+	\item The LowRISC project aims to become the ``linux of the hardware word''\cite{lowrisc}
+	\item SiFive and Open-V are creating custom silicon products\cite{sifive},~\cite{open-v}
+	\item ETH Zurich and Università di Bologna cooperate to create a state-of-the-art low-power parallel processor (PULP) and a single-core microcontroller derived from that processor (PULPino)\cite{pulp}
+	\item IIT Madras creates a processor\cite{iid-madras}
+	\item NVIDIA will use the RISC-V ISA for the replacement of their Falcon processor\cite{nvidia}
+	\item A number of vendors create commercial soft and hard implementations\cite{riscv-commercial} %TODO: Better text
+	\item UCB uses RISC-V processors for research purposes as well as for teaching\cite{ucb}
 \end{itemize}
+%}}}
 %}}}
 
 %{{{
 \section{RocketChip}
-The UCB currently developes three lines of RISC-V processors, Sodor, Rocket and Boom.
-Sodor is a collection of simple processors for use in lectures, Rocket is a scalar in-order processor for personal applications and Boom is a superscalar out-of-order processor for high performance applications.
-All three are written in Chisel (Creating Hardware in a Scala Embedded Language), a hardware description language --as the name implies-- embedded in Scala.
-Chisel allows compilation into three distinct target formats, the first of which is a cycle accurate \CC/ model for fast simulation and software development, the other targets are verilog code aimed at implementation in an FPGA or ASIC\@.
-For Rocket and Boom there is a generator framework that can create a whole parametrised system around the processor cores, called RocketChip.
-It will create one or more Rocket, Boom or custom cores, surround it with caches, optionally an FPU and accelerators to form one or more tiles. Then the tiles are connected to a TileLink network. The CPU is finished by adding TileLink to AXI4 converters to provide a well known bus interface to the outside world. Figure~\ref{rcov} shows a schematic of the generated system.
-
 %{{{ RocketChip overview
 
 \begin{figure}[!t]
@@ -139,7 +136,15 @@ It will create one or more Rocket, Boom or custom cores, surround it with caches
 	\label{rcov}
 \end{figure}
 %}}}
+The UCB currently developes three lines of RISC-V processors, Sodor, Rocket and Boom.
+Sodor is a collection of simple processors for use in lectures, Rocket is a scalar in-order processor for personal applications and Boom is a superscalar out-of-order processor for high performance applications.
+All three are written in Chisel (Creating Hardware in a Scala Embedded Language), a hardware description language --as the name implies-- embedded in Scala.
+Chisel allows compilation into three distinct target formats, the first of which is a cycle accurate \CC/ model for fast simulation and software development, the other targets are verilog code aimed at implementation in an FPGA or ASIC\@.
+For Rocket and Boom there is a generator framework that can create a whole parametrised system around the processor cores, called RocketChip.
+It will create one or more Rocket, Boom or custom cores, surround it with caches, optionally an FPU and accelerators to form one or more tiles. Then the tiles are connected to a TileLink network. The CPU is finished by adding TileLink to AXI4 converters to provide a well known bus interface to the outside world. Figure~\ref{rcov} shows a schematic of the generated system.
 
+
+%{{{
 \subsection{General Usage}
 The RocketChip is maintained in a Git repository.
 To build the default-configuration RocketChip, one only has to clone the repository, build the included GCC toolchain for RISC-V, and run ``\texttt{make}'' as shown in listing~\ref{rcclone}. For building a Boom-chip, the steps are identical except that one also has to checkout the ``\texttt{boom}'' branch of the same repository which then includes the Booms repo as a submodule.
@@ -171,14 +176,17 @@ To build the default-configuration RocketChip, one only has to clone the reposit
 		\caption{Building the RSCV-toolchain.}
 		\label{rctoolchain}
 	\end{subtable}
-	\begin{subtable}[b]{0.8\linewidth}
+	\begin{subtable}[b]{0.9\linewidth}
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{bash}
+			# Substitute ExampleSmallConfig with
+			# any available configuration.
+			# Use e.g BOOMConfig when building a Boom
 			cd $RC/emulator # Build the C++ simulator
 			make run CONFIG=ExampleSmallConfig
 			cd $RC/vsim     # Create the verilog code
 			make -jN CONFIG=ExampleSmallConfig
 		\end{minted}
-		\caption{Building the SOC and a simulator. Substitute CONFIG=BOOMConfig when building a BOOM.}
+		\caption{Building the SOC and a simulator.}
 		\label{rcmake}
 	\end{subtable}
 \end{table}
@@ -186,8 +194,9 @@ To build the default-configuration RocketChip, one only has to clone the reposit
 
 If the environment variable RISCV is not set to point to a sane installation of the toolchain, the following build steps will fail, so the next part is building the RISCV-toolchain as shown in listing~\ref{rctoolchain}.
 
+\subsection{Configurations}
 
-\subsection{Building a Configuration}
+\subsubsection{Building an existing Configuration}
 The makefile has a variable named ``\texttt{CONFIG}'' which is set to the name of a configuration.
 A configuration is a set of configuration options that define the generated system.
 Available configuration options can be found in \texttt{\$(RC)/src/main/scala/coreplex/Configs.scala}, and include for example:
@@ -206,10 +215,16 @@ Available configuration options can be found in \texttt{\$(RC)/src/main/scala/co
 \end{itemize}
 %}}}
 These options are grouped into different build configurations which can be found in \texttt{\$RC/src/main/scala/rocketchip/Configs.scala}.
-Building one of the pre-defined configurations is as simple as setting the \texttt{CONFIG} variable while \texttt{make}-ing the project. Listing~\ref{rcmake} shows the steps to build the emulator and the verilog source code for a certain RocketChip configuration.
+Building one of the pre-defined configurations is as simple as setting the \texttt{CONFIG} variable while \texttt{make}-ing the project.
+Listing~\ref{rcmake} shows the steps to build the emulator and generate the verilog code for a certain RocketChip configuration.
+
+The generated verilog code is placed into a single file of around 11MB (for \texttt{DefaultConfig}) and includes around 300 verilog modules.
+However, the generated code does not only not use any generics like parameterised modules but also involves numerous verbatim copies of the same modules with only the name differing e.g. AsyncResetRegVec\_1..57 (also in \texttt{DefaultConfig}).
+Furthermore, the verilog code uses distictive wires for every connection. While this point-to-point connection scheme probably simplifies the generator code and allows to immediately know which output is driving a certain signal, it renders the code very hard to read as signals can go by many different names although they are connected either directly or through instantiated submodules\footnote{e.g. the clock signal in \texttt{ExampleRocketTop} which is input to the module by the name \texttt{clock}, is connected to (and on another place assigned to) the wire texttt{socBus\_clock}, and assigned to \texttt{AXI4Fragmenter\_1\_clock}, \texttt{AXI4ToTL\_1\_clock}, \texttt{AsyncQueueSink\_1\_1\_clock}, \texttt{AsyncQueueSource\_1\_1\_clock}, \texttt{TLMonitor\_40..52\_clock}, \texttt{TLToAXI4\_2..3\_clock}, \texttt{TLWidthWidget\_2\_clock}, \texttt{bootrom\_TLAtomicAutomata\_clock}, \texttt{bootrom\_TLFragmenter\_clock}, \texttt{bootrom\_TLWidthWidget\_clock}, \texttt{bootrom\_clock}, \texttt{coreplex\_clock}, \texttt{extInterruptXing\_clock}, \texttt{intBus\_clock}, \texttt{l1tol2\_TLSourceShrinker\_clock}, \texttt{l1tol2\_TLWidthWidget\_clock}, \texttt{l2\_clock} and \texttt{peripheryBus\_clock}.}.
 
 
-\subsection{Creating a Configuration}
+
+\subsubsection{Creating a new Configuration}
 RocketChip configurations are written as scala code and inherit from the \texttt{Config} class defined in \texttt{\$RC/src/main/scala/config/Configs.scala}, which sets up some functionality including the '++' operator that is used to add the configuration options, or one of its child classes which already have some options set.
 To evaluate the propagation of different configuration options into the generated verilog code, two new configurations differing in cache associativity and size were created as shown in listing~\ref{new-configs} using the configurations options listed in listing~\ref{config-options}.
 
@@ -272,7 +287,7 @@ To evaluate the propagation of different configuration options into the generate
 \end{table}
 %}}}
 
-\subsection{Analysis of configuration propagation}
+\subsubsection{Analysis of configuration propagation}
 The instruction cache parameters were chosen for their simple observability. Unlike for example the TileLink configuration options, the cache parameter only affect one verilog module, ICache\_icache, and are relatively simple to check by examining the SRAM memories that are instantiated.
 For the 2-way configuration, the core of the cache can be expected to be two 32x21 bit tag SRAMs and two 32x512 bit (32x64 bytes) data SRAMs\footnote{\label{note-width}Or of course a configuration of smaller width but the same capacity}.
 Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 bytes) data SRAMs\footnotemark[\ref{note-width}] for the 4-way configuration.
@@ -287,6 +302,8 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 		%tag                   index WS   BS
 		%XXXXXXXXXXXXXXXXXXXXX XXXXX XXXX XX
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{verilog}
+			module ICache_icache(...);
+			...
 				// Instantiated once
 				module tag_array(
 					input  [4:0] RW0_addr,
@@ -312,6 +329,8 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 					output [63:0] RW0_rdata
 				);
 				reg [63:0] ram [255:0];
+				...
+			endmodule
 		\end{minted}
 		\caption{The instantiated SRAMs for the 2-way configuration.}
 		\label{srams-2-way}
@@ -321,6 +340,8 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 		%tag                   index  WS  BS
 		%XXXXXXXXXXXXXXXXXXXXX XXXXXX XXX XX
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{verilog}
+			module ICache_icache(...);
+			...
 				// Instantiated once
 				module tag_array(
 					input  [5:0] RW0_addr,
@@ -352,6 +373,8 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 					output [63:0] RW0_rdata
 				);
 				reg [63:0] ram [255:0];
+				...
+			endmodule
 		\end{minted}
 		\caption{The instantiated SRAMs for the 4-way configuration.}
 		\label{srams-4-way}
@@ -362,9 +385,23 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 Looking at the generated code shown in listing~\ref{srams}, it can be verified, that indeed SRAMs of the expected capacities are created.
 However the two and four tag SRAMs are merged into a big single two- and four-port SRAM respectively.
 The data SRAMs use a narrower but deeper storage array, providing word-wise access but retaining the correct capacity. The required capacity per cache is the same for both configurations so the same SRAM gets instantiated.
-The used SRAM verilog modules get created by the script \texttt{\$RC/vsim/vlsi\_mem\_gen} which per default generated behavioural descriptions of the requested SRAMs.
+The used SRAM verilog modules get created by the script \texttt{\$RC/vsim/vlsi\_mem\_gen} which per default generates behavioural descriptions of the requested SRAMs.
 For an actual implementation, this script should be adapted to generate verilog wrappers for actually available SRAM blocks.
 Since such an implementation will be forced to always use the next bigger (wider and/or deeper) available SRAM type, it might be interesting to dimension the cache organisation accordingly to maximise the cache parameters within the used SRAMs.
+asdfasdfasdfasasdfaaasiiiiiiiiifsfadsfasdfasdfasfasdfasdfasdjf;lkajdsf;lkjadsf;lksajfd;lkajsdf;a;dsf
+%}}}
+
+%{{{
+\subsection{Interfaces}
+\lipsum
+
+
+%}}}
+
+
+
+
+
 
 
 
@@ -377,9 +414,9 @@ Since such an implementation will be forced to always use the next bigger (wider
 
 %{{{
 \section{Conclusion}
-%Both \twi\ and SPI are very mature, while still up-to-date bus systems for low-speed, low-complexity interconnection of integrated circuits.
-%With their wide acceptance and when used as intended, both \twi\ and SPI are recommendable and reliable bus systems.
-
+The RISCV instruction set architecture is an interesting new player in the field of general purpose ISAs.
+It has sparked interest by a broad spectrum of players spanning from research facilities over commercial chip vendors to state-owned defense projects with several implementations in the process of reaching or having reached market-ready status and intensive use in the research field.
+With RocketChip, there exists a framework to ease the development of complete system-on-chip solutions
 %}}}
 
 \bigskip
@@ -387,12 +424,32 @@ Since such an implementation will be forced to always use the next bigger (wider
 
 %{{{
 \begin{thebibliography}{1}
+	\bibitem{riscv}
+	\url{https://www.youtube.com/watch?v=QTYiH1Y5UV0} At time 17:55
 	\bibitem{rcgen}
 	Asanovi\'c, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
 	The Rocket Chip Generator.\\
 	Technical Report No. UCB/EECS--2016--17, EECS Department, University of California, Berkeley.\\
-	\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS--2016--17.html}\\
+	\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
 
+	\bibitem{lowrisc}
+		lowRISC: \url{http://www.lowrisc.org/}\\
+	\bibitem{sifive}
+		SiFive: \url{https://www.sifive.com/}\\
+	\bibitem{open-v}
+		Open-V: \url{https://www.crowdsupply.com/onchip/open-v}
+	\bibitem{pulp}
+		Pulp: \url{http://www.pulp-platform.org}\\
+		\url{http://iis-projects.ee.ethz.ch/index.php/PULP}
+	\bibitem{iid-madras}
+		IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}\\
+	\bibitem{nvidia}
+		Nvidia: \url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}\\
+	\bibitem{riscv-commercial}
+		List of companies presenting commercial implementations of RISC-V at Embedded World 2017\\
+		\url{https://riscv.org/2017/03/risc-v-mainstream-ew2017/}
+	\bibitem{ucb}
+		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}\\
 	\bibitem{rc_github}
 	The RocketChip github pages\\
 	\url{https://github.com/ucb-bar/rocket-chip}\\

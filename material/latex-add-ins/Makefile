@@ -7,13 +7,21 @@
 # Find all tex images and require them to be build
 images := $(notdir $(wildcard image_sources/*.tex))
 images := $(images:tex=pdf)
-all: $(images)
+#all: $(images)
+
+PROJECT_NAME := image4.pdf
+all: image4.pdf
+
 
 
 # Build all images as stand-alone version
-%.pdf: image_sources/%.tex common.tex boilerplate.tex
-	lualatex -shell-escape --jobname '$(basename $@)' boilerplate.tex
-	@rm -f  $(basename $@).aux $(basename $@).log
+%.pdf: boilerplate.tex common.tex image_sources/%.tex
+	@#lualatex -shell-escape --jobname '$(basename $@)' boilerplate.tex
+	latexmk -lualatex --jobname='$(basename $@)'  -f  -latexoption="-interaction=nonstopmode --shell-escape --file-line-error"  boilerplate.tex
+	@#rm -f  $(basename $@).aux $(basename $@).log
+	@notify-send "Done building"
+
+
 
 
 .PHONY: view
@@ -27,6 +35,8 @@ clean:
 	rm -f *.pdf
 	rm -f *.log
 	rm -f *.aux
+	rm -f *.fdb_latexmk
+	rm -f *.fls
 
 
 
