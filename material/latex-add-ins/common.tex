@@ -58,6 +58,9 @@
 %	}
 %}
 \tikzset{
+	shorten <>/.style={shorten >=#1, shorten <=#1}
+}
+\tikzset{
 	tile/.pic={
 		\node[rectangle,draw,align=center,text width=30,inner sep=1,minimum height=18]                      (RC) at (0,0)  {Rocket\\Core};
 		\node[rectangle,draw,align=center,text width=12,inner sep=1,below=of RC.west,anchor=west,yshift=13] (I$)           {I\$};
