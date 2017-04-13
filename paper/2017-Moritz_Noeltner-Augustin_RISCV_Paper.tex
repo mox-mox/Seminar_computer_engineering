@@ -60,6 +60,31 @@
 
 
 
+%{{{ inputfile
+
+\input{../material/latex-add-ins/common}
+% source: http://tex.stackexchange.com/questions/40738/how-to-properly-make-a-latex-project
+\newcommand\inputfile[1]{%
+    \InputIfFileExists{#1}{}{\typeout{No file #1.}}%
+}
+
+
+%\newcommand*{\COMPILEIMAGES}{}%
+
+
+% Whether to compile the image-lets or include the pre-compiled ones
+\newcommand*{\COMPILEIMAGES}{}%
+
+\newcommand\inputimage[1]{%
+	\ifdefined\COMPILEIMAGES
+		\input{../material/latex-add-ins/image_sources/#1}
+	\else
+		\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{../material/latex-add-ins/#1}
+	\fi
+	}
+
+
+%}}}
 
 
 
@@ -393,6 +418,21 @@ asdfasdfasdfasasdfaaasiiiiiiiiifsfadsfasdfasdfasfasdfasdfasdjf;lkajdsf;lkjadsf;l
 
 %{{{
 \subsection{Interfaces}
+%{{{
+\begin{figure}[!t]
+	\fourwayfalse
+	\centering
+	\inputimage{image4}
+	\caption{Overview of the components of RocketChip.\newline\hspace{\linewidth}\source{Image taken from~\cite{rcgen}}.}
+	\label{asdf}
+\end{figure}
+%}}}
+
+
+
+
+
+
 \lipsum
 
 

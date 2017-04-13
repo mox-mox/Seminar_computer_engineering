@@ -3,7 +3,6 @@
 \usetikzlibrary{positioning,shapes,shadows,calc,positioning}
 \usetikzlibrary{decorations.pathreplacing,angles,quotes}
 \usetikzlibrary{decorations.pathmorphing}
-%\usetikzlibrary{fit}
 
 
 % This part taken from http://www.texample.net/tikz/examples/double-arrows/
@@ -36,269 +35,34 @@
 \usepackage{etex} %% Cool Stuff, see http://tex.stackexchange.com/a/36721/69074 : \foreach \i in {0,...,\number\numexpr\memBlocks-1\relax}
 \newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.03em}\raisebox{.4ex}{\tiny\bf +}}
 
+%{{{ For image1
 
+\newif\iffourway
+%}}}
 
+%{{{ For image3
 
-%{{{ Extract Coordinates
+\newif\ifshowreq
+\newif\ifshowwb
+%}}}
 
-% http://tex.stackexchange.com/a/179946/69074
-\makeatletter
-\def\extractcoord#1#2#3{%
-  \path let \p1=(#3) in \pgfextra{%
-    \pgfmathsetmacro#1{\x{1}/\pgf@xx}%
-    \pgfmathsetmacro#2{\y{1}/\pgf@yy}%
-    \xdef#1{#1} \xdef#2{#2}%
-  };%
-}%
-\makeatother
+%{{{ For image4
 
-\newcommand*{\LabelCoord}[4]{\fill [#1] ($(#2,#3)$) circle (2pt) node [right] {#4}}%
+%\usetikzlibrary{decorations.pathmorphing,calc,shapes,shapes.geometric,patterns}
+%\tikzset{
+%	treetop/.style = {decoration={random steps, segment length=0.4mm}, decorate},
+%	trunk/.style   = {decoration={random steps, segment length=2mm,amplitude=0.2mm}, decorate}
+%}
+
+\tikzset{
+	tile/.pic={
+		\node[rectangle,draw,align=center,text width=25,inner sep=1,minimum height=18]                        (RC) at (0,0)  {Rocket\\Core};
+		\node[rectangle,draw,align=center,text width=15,inner sep=1,right=of RC.north,anchor=north,xshift=-5] (I$)           {I\$};
+		\node[rectangle,draw,align=center,text width=15,inner sep=1,right=of RC.south,anchor=south,xshift=-5] (D$)           {D\$};
+		\draw ($ (RC.south west) + (-.05, -.05) $) rectangle ($ (I$.north east) + (+.05, +.05) $);
+	}
+}
 %}}}
 
 
-% For image1
-\newif\iffourway
 
-% For image3
-\newif\ifshowreq
-\newif\ifshowwb
-
-
-\makeatletter
-\tikzset{arc style/.initial={}}
-\pgfdeclareshape{circle with arcs}{
-	\inheritsavedanchors[from=circle]
-	\inheritanchorborder[from=circle]
-
-	\inheritanchor[from=circle]{center}
-	\inheritanchor[from=circle]{south}
-	\inheritanchor[from=circle]{west}
-	\inheritanchor[from=circle]{north}
-	\inheritanchor[from=circle]{east}
-	% etc.
-
-	\inheritbackgroundpath[from=circle]
-
-	\beforebackgroundpath{
-		% get and set options
-		\pgfkeys{/tikz/arc style/.get=\tmp}
-		\expandafter\tikzset\expandafter{\tmp}
-		\tikz@options
-
-		% get radius length and center coordinates
-		\radius \pgf@xa=\pgf@x
-		\centerpoint \pgf@xb=\pgf@x \pgf@yb=\pgf@y
-
-		% draw arc starting from north
-		\advance\pgf@yb by\pgf@xa
-		\pgfpathmoveto{\pgfpoint{\pgf@xb}{\pgf@yb}}
-		\pgfpatharc{180}{270}{\pgf@xa}
-
-		% draw arc starting from south
-		\advance\pgf@yb by -2\pgf@xa
-		\pgfpathmoveto{\pgfpoint{\pgf@xb}{\pgf@yb}}
-		\pgfpatharc{0}{90}{\pgf@xa}
-
-		\pgfusepath{draw}
-	}
-}
-
-\pgfdeclareshape{rotcamera}
-{
-  \inheritsavedanchors[from=circle] % this is nearly a circle
-  \inheritanchorborder[from=circle]
-  \inheritanchor[from=circle]{north}
-  \inheritanchor[from=circle]{north west}
-  \inheritanchor[from=circle]{north east}
-  \inheritanchor[from=circle]{center}
-  \inheritanchor[from=circle]{west}
-  \inheritanchor[from=circle]{east}
-  \inheritanchor[from=circle]{mid}
-  \inheritanchor[from=circle]{mid west}
-  \inheritanchor[from=circle]{mid east}
-  \inheritanchor[from=circle]{base}
-  \inheritanchor[from=circle]{base west}
-  \inheritanchor[from=circle]{base east}
-  \inheritanchor[from=circle]{south}
-  \inheritanchor[from=circle]{south west}
-  \inheritanchor[from=circle]{south east}
-  \inheritbackgroundpath[from=circle]
-  \foregroundpath{
-    \centerpoint%
-    \pgf@xc=\pgf@x%                                                                                                                   \pgf@xc = x value of centerpoint
-    \pgf@yc=\pgf@y%                                                                                                                   \pgf@yc = y value of centerpoint
-    \pgfutil@tempdima=\radius%                                                                                              \pgfutil@tempdima = radius
-    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/outer xsep}}%                                                                     \pgf@xb = outer xsep
-    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/outer ysep}}%                                                                     \pgf@yb = outer ysep
-    \pgfmathsetmacro{\pgf@camera@rotate}{\pgfkeysvalueof{/tikz/camera rotate}}%                                            \pgf@camera@rotate = camera rotate
-    \ifdim\pgf@xb<\pgf@yb%
-      \advance\pgfutil@tempdima by-\pgf@yb%
-    \else%
-      \advance\pgfutil@tempdima by-\pgf@xb%
-    \fi%
-    \pgftransformrotate{\pgf@camera@rotate}% add -90 for standard east direction
-    \pgfpathmoveto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{0.624695047\pgfutil@tempdima}{0.780868809\pgfutil@tempdima}}}
-    \pgfpathlineto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{2\pgfutil@tempdima}{2.5\pgfutil@tempdima}}}
-    \pgfpathlineto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{-2\pgfutil@tempdima}{2.5\pgfutil@tempdima}}}
-    \pgfpathlineto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{-0.624695047\pgfutil@tempdima}{0.780868809\pgfutil@tempdima}}}
-    \pgfpatharc{128.6598083}{51.34019175}{\pgfutil@tempdima}
-    \pgfpathclose
-    \pgfsetfillcolor{black}
-    \pgfusepath{fill}
-  }
-}
-
-% this declares a fixed camera, it has to be rotated by the /tikz/rotate key
-\pgfdeclareshape{fixcamera}
-{
-  \inheritsavedanchors[from=circle] % this is nearly a circle
-  \inheritanchorborder[from=circle]
-  \inheritanchor[from=circle]{north}
-  \inheritanchor[from=circle]{north west}
-  \inheritanchor[from=circle]{north east}
-  \inheritanchor[from=circle]{center}
-  \inheritanchor[from=circle]{west}
-  \inheritanchor[from=circle]{east}
-  \inheritanchor[from=circle]{mid}
-  \inheritanchor[from=circle]{mid west}
-  \inheritanchor[from=circle]{mid east}
-  \inheritanchor[from=circle]{base}
-  \inheritanchor[from=circle]{base west}
-  \inheritanchor[from=circle]{base east}
-  \inheritanchor[from=circle]{south}
-  \inheritanchor[from=circle]{south west}
-  \inheritanchor[from=circle]{south east}
-  \inheritbackgroundpath[from=circle]
-  \foregroundpath{
-    \centerpoint%
-    \pgf@xc=\pgf@x%                                                                                                                   \pgf@xc = x value of centerpoint
-    \pgf@yc=\pgf@y%                                                                                                                   \pgf@yc = y value of centerpoint
-    \pgfutil@tempdima=\radius%                                                                                              \pgfutil@tempdima = radius
-    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/outer xsep}}%                                                                     \pgf@xb = outer xsep
-    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/outer ysep}}%                                                                     \pgf@yb = outer ysep
-    \ifdim\pgf@xb<\pgf@yb%                                                                                                           correction of radius variable
-      \advance\pgfutil@tempdima by-\pgf@yb%
-    \else%
-      \advance\pgfutil@tempdima by-\pgf@xb%
-    \fi%
-    %\pgftransformrotate{-90}%
-    \pgfpathmoveto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{0.624695047\pgfutil@tempdima}{0.780868809\pgfutil@tempdima}}}
-    \pgfpathlineto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{2\pgfutil@tempdima}{2.5\pgfutil@tempdima}}}
-    \pgfpathlineto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{-2\pgfutil@tempdima}{2.5\pgfutil@tempdima}}}
-    \pgfpathlineto{\pgfpointadd{\pgfqpoint{\pgf@xc}{\pgf@yc}}{\pgfqpoint{-0.624695047\pgfutil@tempdima}{0.780868809\pgfutil@tempdima}}}
-    \pgfpatharc{128.6598083}{51.34019175}{\pgfutil@tempdima}
-    \pgfpathclose
-    \pgfsetfillcolor{black}
-    \pgfusepath{fill}
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%\tikzset{foo style/.initial={}}
-%\pgfdeclareshape{rectangle with foos}{
-%	\inheritsavedanchors[from=rectangle]
-%	\inheritanchorborder[from=rectangle]
-%
-%	\inheritanchor[from=rectangle]{center}
-%	\inheritanchor[from=rectangle]{south}
-%	\inheritanchor[from=rectangle]{west}
-%	\inheritanchor[from=rectangle]{north}
-%	\inheritanchor[from=rectangle]{east}
-%
-%	% etc.
-%
-%	%\inheritbackgroundpath[from=rectangle]
-%
-%	\beforebackgroundpath{
-%%		% get and set options
-%%		\pgfkeys{/tikz/foo style/.get=\tmp}
-%%		\expandafter\tikzset\expandafter{\tmp}
-%%		\tikz@options
-%%
-%%		% get radius length and center coordinates
-%%		\radius \pgf@xa=\pgf@x
-%		\centerpoint \pgf@xb=\pgf@x \pgf@yb=\pgf@y
-%%
-%%		% draw foo starting from north
-%%		\advance\pgf@yb by\pgf@xa
-%%		\pgfpathmoveto{\pgfpoint{\pgf@xb}{\pgf@yb}}
-%%		\pgfpatharc{180}{270}{\pgf@xa}
-%%
-%%		% draw foo starting from south
-%%		\advance\pgf@yb by -2\pgf@xa
-%%		\pgfpathmoveto{\pgfpoint{\pgf@xb}{\pgf@yb}}
-%%		\pgfpatharc{0}{90}{\pgf@xa}
-%
-%		\pgfusepath{draw}
-%	}
-%}
-
-
-
-
-\tikzset{bs style/.initial={}}
-\pgfdeclareshape{bs}{
-	\inheritsavedanchors[from=rectangle]
-	\inheritanchorborder[from=rectangle]
-
-	\inheritbehindbackgroundpath[from=rectangle]
-	\inheritbackgroundpath[from=rectangle]
-	\inheritbeforebackgroundpath[from=rectangle]
-	\inheritbehindforegroundpath[from=rectangle]
-	\inheritforegroundpath[from=rectangle]
-	\inheritbeforeforegroundpath[from=rectangle]  
-	\inheritanchor[from=rectangle]{center}
-	\inheritanchor[from=rectangle]{north}
-	\inheritanchor[from=rectangle]{south}
-	\inheritanchor[from=rectangle]{west}
-	\inheritanchor[from=rectangle]{east}  
-
-	\backgroundpath{
-
-		% get and set options
-		\pgfkeys{/tikz/bs style/.get=\tmp}
-		\expandafter\tikzset\expandafter{\tmp}
-		\tikz@options
-
-		%\pgf@sh@bg@rectangle
-
-		% store lower left in xa/ya and upper right in xb/yb
-		\southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
-		\northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y        
-		% construct main path
-		\pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
-		\pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb}}
-		\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
-		\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya}}
-		\pgfpathclose   
-		% add diagonal
-		\pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
-		\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
-%		\pgfusepath{draw}
-	}   
-}
-
-
-
-
-
-
-
-
-
-
-
-\makeatother
