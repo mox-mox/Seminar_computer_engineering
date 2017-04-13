@@ -48,18 +48,23 @@
 
 %{{{ For image4
 
-%\usetikzlibrary{decorations.pathmorphing,calc,shapes,shapes.geometric,patterns}
-%\tikzset{
-%	treetop/.style = {decoration={random steps, segment length=0.4mm}, decorate},
-%	trunk/.style   = {decoration={random steps, segment length=2mm,amplitude=0.2mm}, decorate}
-%}
 
+%\tikzset{
+%	tile/.pic={
+%		\node[rectangle,draw,align=center,text width=25,inner sep=1,minimum height=18]                        (RC) at (0,0)  {Rocket\\Core};
+%		\node[rectangle,draw,align=center,text width=15,inner sep=1,right=of RC.north,anchor=north,xshift=-5] (I$)           {I\$};
+%		\node[rectangle,draw,align=center,text width=15,inner sep=1,right=of RC.south,anchor=south,xshift=-5] (D$)           {D\$};
+%		\draw ($ (RC.south west) + (-.05, -.05) $) rectangle ($ (I$.north east) + (+.05, +.05) $);
+%	}
+%}
 \tikzset{
 	tile/.pic={
-		\node[rectangle,draw,align=center,text width=25,inner sep=1,minimum height=18]                        (RC) at (0,0)  {Rocket\\Core};
-		\node[rectangle,draw,align=center,text width=15,inner sep=1,right=of RC.north,anchor=north,xshift=-5] (I$)           {I\$};
-		\node[rectangle,draw,align=center,text width=15,inner sep=1,right=of RC.south,anchor=south,xshift=-5] (D$)           {D\$};
-		\draw ($ (RC.south west) + (-.05, -.05) $) rectangle ($ (I$.north east) + (+.05, +.05) $);
+		\node[rectangle,draw,align=center,text width=30,inner sep=1,minimum height=18]                      (RC) at (0,0)  {Rocket\\Core};
+		\node[rectangle,draw,align=center,text width=12,inner sep=1,below=of RC.west,anchor=west,yshift=13] (I$)           {I\$};
+		\node[rectangle,draw,align=center,text width=12,inner sep=1,below=of RC.east,anchor=east,yshift=13] (D$)           {D\$};
+		\draw (-0.615,-0.9) rectangle (0.615,0.4);
+
+		%\draw ($ (I$.south west) + (-.05, -.05) $) rectangle ($ (RC.north east) + (+.05, +.05) $);
 	}
 }
 %}}}
