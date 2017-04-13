@@ -32,12 +32,24 @@ $(PROJECT_NAME): $(PROJECT_NAME:pdf=tex)
 	@#latexmk -lualatex -latexoption="-interaction=nonstopmode --shell-escape -file-line-error"  -use-make $< 
 	@#latexmk -lualatex -latexoption="--shell-escape -file-line-error" $<
 	latexmk -lualatex -f  -latexoption="-interaction=nonstopmode --shell-escape --file-line-error"  $<
+	@#latexmk -lualatex -latexoption=" --shell-escape --file-line-error"  $<
 	notify-send "Done building"
 	@#bash -c "latexmk -lualatex -latexoption=\"-interaction=nonstopmode --shell-escape\"  -use-make $< 2>/dev/null > /dev/null"
 
 
 
 #./2017-Moritz_Noeltner-Augustin_RISCV_Paper.tex:228: Paragraph ended before \begin was complete. 
+
+
+
+
+manual: $(PROJECT_NAME:pdf=tex)
+	lualatex --shell-escape --file-line-error --halt-on-error  $<
+	notify-send "Done building"
+
+
+
+
 
 
 .PHONY: build

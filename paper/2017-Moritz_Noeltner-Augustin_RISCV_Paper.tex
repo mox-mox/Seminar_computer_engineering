@@ -47,7 +47,7 @@
 %{{{ Avebritations
 
 \def\krste/{Krste Asanovi\'c}
-\def\CC/{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\textbf{+}}\nolinebreak\hspace{-.03em}\raisebox{.4ex}{\tiny\textbf{+} } }
+%\def\CC/{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\textbf{+}}\nolinebreak\hspace{-.03em}\raisebox{.4ex}{\tiny\textbf{+} } }
 %}}}
 
 %{{{ Some hacks
@@ -81,17 +81,20 @@
 	\else
 		\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{../material/latex-add-ins/#1}
 	\fi
-	}
+}
 
 
 %}}}
 
 
 
+\makeatletter
+\newcommand\footnoteref[1]{\protected@xdef\@thefnmark{\ref{#1}}\@footnotemark}
+\makeatother
 
 
 
-
+\widowpenalties 1 5
 
 
 
@@ -174,7 +177,7 @@ It will create one or more Rocket, Boom or custom cores, surround it with caches
 The RocketChip is maintained in a Git repository.
 To build the default-configuration RocketChip, one only has to clone the repository, build the included GCC toolchain for RISC-V, and run ``\texttt{make}'' as shown in listing~\ref{rcclone}. For building a Boom-chip, the steps are identical except that one also has to checkout the ``\texttt{boom}'' branch of the same repository which then includes the Booms repo as a submodule.
 
-%{{{ RocketChip Build Steps
+%{{{ RocketChip Build Steps (Listing I)
 
 \begin{table}
 	\caption{Build steps for RocketChip.\newline\hspace{\linewidth}Source: Collected from~\cite{rc_github} and~\cite{boom_github}.}
@@ -249,11 +252,7 @@ Furthermore, the verilog code uses distictive wires for every connection. While 
 
 
 
-\subsubsection{Creating a new Configuration}
-RocketChip configurations are written as scala code and inherit from the \texttt{Config} class defined in \texttt{\$RC/src/main/scala/config/Configs.scala}, which sets up some functionality including the '++' operator that is used to add the configuration options, or one of its child classes which already have some options set.
-To evaluate the propagation of different configuration options into the generated verilog code, two new configurations differing in cache associativity and size were created as shown in listing~\ref{new-configs} using the configurations options listed in listing~\ref{config-options}.
-
-%{{{ Config Options
+%{{{ Config Options (Listing II)
 
 \begin{table}
 	\caption{Overview of the configuration system.}
@@ -311,13 +310,16 @@ To evaluate the propagation of different configuration options into the generate
 	\end{subtable}
 \end{table}
 %}}}
-
+\subsubsection{Creating a new Configuration}
+RocketChip configurations are written as scala code and inherit from the \texttt{Config} class defined in \texttt{\$RC/src/main/scala/config/Configs.scala}, which sets up some functionality including the '++' operator that is used to add the configuration options, or one of its child classes which already have some options set.
+To evaluate the propagation of different configuration options into the generated verilog code, two new configurations differing in cache associativity and size were created as shown in listing~\ref{new-configs} using the configurations options listed in listing~\ref{config-options}.
 \subsubsection{Analysis of configuration propagation}
 The instruction cache parameters were chosen for their simple observability. Unlike for example the TileLink configuration options, the cache parameter only affect one verilog module, ICache\_icache, and are relatively simple to check by examining the SRAM memories that are instantiated.
-For the 2-way configuration, the core of the cache can be expected to be two 32x21 bit tag SRAMs and two 32x512 bit (32x64 bytes) data SRAMs\footnote{\label{note-width}Or of course a configuration of smaller width but the same capacity}.
-Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 bytes) data SRAMs\footnotemark[\ref{note-width}] for the 4-way configuration.
+For the 2-way configuration, the core of the cache can be expected to be two 32x21 bit tag SRAMs and two 32x512 bit (32x64 bytes) data SRAMs\footnote{\label{note-width}Or, of course a configuration of smaller width but the same capacity}.
+%Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 bytes) data SRAMs\footnotemark[\ref{note-width}] for the 4-way configuration.
+Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 bytes) data SRAMs\footnoteref{note-width} for the 4-way configuration.
 
-%{{{ Module ICache_icache
+%{{{ Module ICache_icache (Listing III)
 
 \begin{table}
 	\caption{Extracts from the generated ICache\_icache Module.}
@@ -328,9 +330,8 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 		%XXXXXXXXXXXXXXXXXXXXX XXXXX XXXX XX
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{verilog}
 			module ICache_icache(...);
-			...
-				// Instantiated once
-				module tag_array(
+				...
+				module tag_array( // Instantiated once
 					input  [4:0] RW0_addr,
 					input   RW0_en,
 					input   RW0_clk,
@@ -344,8 +345,7 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 				);
 				reg [41:0] ram [31:0];
 				...
-				// Instantiated twice
-				module _T_772(
+				module _T_772( // Instantiated twice
 					input  [7:0] RW0_addr,
 					input   RW0_en,
 					input   RW0_clk,
@@ -366,9 +366,8 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 		%XXXXXXXXXXXXXXXXXXXXX XXXXXX XXX XX
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{verilog}
 			module ICache_icache(...);
-			...
-				// Instantiated once
-				module tag_array(
+				...
+				module tag_array( // Instantiated once
 					input  [5:0] RW0_addr,
 					input   RW0_en,
 					input   RW0_clk,
@@ -388,8 +387,7 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 				);
 				reg [83:0] ram [63:0];
 				...
-				// Instantiated four times
-				module _T_850(
+				module _T_850( // Instantiated four times
 					input  [7:0] RW0_addr,
 					input   RW0_en,
 					input   RW0_clk,
@@ -413,20 +411,21 @@ The data SRAMs use a narrower but deeper storage array, providing word-wise acce
 The used SRAM verilog modules get created by the script \texttt{\$RC/vsim/vlsi\_mem\_gen} which per default generates behavioural descriptions of the requested SRAMs.
 For an actual implementation, this script should be adapted to generate verilog wrappers for actually available SRAM blocks.
 Since such an implementation will be forced to always use the next bigger (wider and/or deeper) available SRAM type, it might be interesting to dimension the cache organisation accordingly to maximise the cache parameters within the used SRAMs.
-asdfasdfasdfasasdfaaasiiiiiiiiifsfadsfasdfasdfasfasdfasdfasdjf;lkajdsf;lkjadsf;lksajfd;lkajsdf;a;dsf
+asdfasdfasdfasasdfaaasiiiiiiiiifsfadsfasdfasdfasfasdfasdfasdjf;lkajdsf;lkjadsf;lksajfd;lkajsdf;a;dsfjasdflasdfljsadlfjsal;djflksajdflkasjdf;lakjsdf;lajsfd;ljasd;lfja;lsjfljsadflksadkjfhkjsahfkjahsdkjfhsadhfkjahsdfjhiuehasdfahsdfjhakjsdhfhwiuehfadsifuuewhfkjafkjahsfiuhaksd;lfjz;ldskjflawkjfoijqjalkzjfl;kzjsfoiawfzsdflkj;lkj;lkjk;ljasdfasdfasd.
 %}}}
 
 %{{{
 \subsection{Interfaces}
 %{{{
-\begin{figure}[!t]
+\begin{figure}%[!t]
 	\fourwayfalse
 	\centering
 	\inputimage{image4}
-	\caption{Overview of the components of RocketChip.\newline\hspace{\linewidth}\source{Image taken from~\cite{rcgen}}.}
+	\caption{The principal busses in the RocketChip. Depending on configuration, the L2 cache bus and debug interface may also be exposed on the module edge. }
 	\label{asdf}
 \end{figure}
 %}}}
+
 
 
 
@@ -471,6 +470,10 @@ With RocketChip, there exists a framework to ease the development of complete sy
 	The Rocket Chip Generator.\\
 	Technical Report No. UCB/EECS--2016--17, EECS Department, University of California, Berkeley.\\
 	\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
+
+	\bibitem{rcgen-tutorial}
+	Tutorial for the  Rocket Chip build system\\
+	\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
 
 	\bibitem{lowrisc}
 		lowRISC: \url{http://www.lowrisc.org/}\\
