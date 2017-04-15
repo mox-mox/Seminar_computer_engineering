@@ -314,7 +314,7 @@ Furthermore, the verilog code uses distictive wires for every connection. While 
 RocketChip configurations are written as scala code and inherit from the \texttt{Config} class defined in \texttt{\$RC/src/main/scala/config/Configs.scala}, which sets up some functionality including the '++' operator that is used to add the configuration options, or one of its child classes which already have some options set.
 To evaluate the propagation of different configuration options into the generated verilog code, two new configurations differing in cache associativity and size were created as shown in listing~\ref{new-configs} using the configurations options listed in listing~\ref{config-options}.
 \subsubsection{Analysis of configuration propagation}
-The instruction cache parameters were chosen for their simple observability. Unlike for example the TileLink configuration options, the cache parameter only affect one verilog module, ICache\_icache, and are relatively simple to check by examining the SRAM memories that are instantiated.
+The instruction cache parameters were chosen for their simple observability. Unlike for example the TileLink configuration options, the cache parameters only affect one verilog module, ICache\_icache, and are relatively simple to check by examining the SRAM memories that are instantiated.
 For the 2-way configuration, the core of the cache can be expected to be two 32x21 bit tag SRAMs and two 32x512 bit (32x64 bytes) data SRAMs\footnote{\label{note-width}Or, of course a configuration of smaller width but the same capacity}.
 %Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 bytes) data SRAMs\footnotemark[\ref{note-width}] for the 4-way configuration.
 Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 bytes) data SRAMs\footnoteref{note-width} for the 4-way configuration.
@@ -421,11 +421,11 @@ asdfasdfasdfasasdfaaasiiiiiiiiifsfadsfasdfasdfasfasdfasdfasdjf;lkajdsf;lkjadsf;l
 	\fourwayfalse
 	\centering
 	\inputimage{image4}
-	\caption{The principal busses in the RocketChip. Depending on configuration, the L2 cache bus and debug interface may also be exposed on the module edge. }
+	\caption{The principal busses in the RocketChip. Depending on configuration, the L2 cache bus may also be exposed. }
 	\label{asdf}
 \end{figure}
 %}}}
-
+While the internals of t the generated RocketChip vary strongly depending on the configuration options, the interface is simpler, consisting of high speed busses for cached and uncached memory access, debugging signals, interrupt signals and clock and reset.
 
 
 
@@ -501,6 +501,10 @@ With RocketChip, there exists a framework to ease the development of complete sy
 	\bibitem{boom_github}
 	The Berkeley Out Of Order Machine github page\\
 	\url{https://github.com/ucb-bar/riscv-boom}\\
+
+	\bibitem{tether}
+	Github issue about untethered operation of RocketChip\\
+	\url{https://github.com/ucb-bar/rocket-chip/issues/434}\\
 
 
 \end{thebibliography}
