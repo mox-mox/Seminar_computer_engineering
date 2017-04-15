@@ -169,7 +169,7 @@ Sodor is a collection of simple processors for use in lectures, Rocket is a scal
 All three are written in Chisel (Creating Hardware in a Scala Embedded Language), a hardware description language --as the name implies-- embedded in Scala.
 Chisel allows compilation into three distinct target formats, the first of which is a cycle accurate \CC/ model for fast simulation and software development, the other targets are verilog code aimed at implementation in an FPGA or ASIC\@.
 For Rocket and Boom there is a generator framework that can create a whole parametrised system around the processor cores, called RocketChip.
-It will create one or more Rocket, Boom or custom cores, surround it with caches, optionally an FPU and accelerators to form one or more tiles. Then the tiles are connected to a TileLink network. The CPU is finished by adding TileLink to AXI4 converters to provide a well known bus interface to the outside world. Figure~\ref{rcov} shows a schematic of the generated system.
+It will create one or more Rocket, Boom or custom cores, surround it with caches, optionally an FPU and accelerators to form one or more [compute-]tiles. Then the tiles are connected to a TileLink network. The CPU is finished by adding TileLink to AXI4 converters to provide a well known bus interface to the outside world. Figure~\ref{rcov} shows a schematic of the generated system.
 
 
 %{{{
@@ -421,11 +421,29 @@ asdfasdfasdfasasdfaaasiiiiiiiiifsfadsfasdfasdfasfasdfasdfasdjf;lkajdsf;lkjadsf;l
 	\fourwayfalse
 	\centering
 	\inputimage{image4}
-	\caption{The principal busses in the RocketChip. Depending on configuration, the L2 cache bus may also be exposed. }
-	\label{asdf}
+	\caption{The principal busses in the RocketChip. The dashed parts are possible periphery modules and not part of RocketChip.}
+	\label{busses}
 \end{figure}
 %}}}
-While the internals of t the generated RocketChip vary strongly depending on the configuration options, the interface is simpler, consisting of high speed busses for cached and uncached memory access, debugging signals, interrupt signals and clock and reset.
+While the internals of the generated RocketChip vary strongly depending on the configuration options, the external interface is more static.
+Save the clock, reset and interrupt lines it consists of the debug interface and some high speed data busses.
+Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advaced eXtensible Interface (AXI) specified by ARM\cite{axi}.
+
+The internal bus system uses TileLink, which is a bus specific to RocketChip and connects the tiles, caches and other core components. In standard configuration, it consists of two full-duplex, 64-bit data paths.
+Using the TileLink and few ancilliarey signals as the only interface for each tile allows easy exchangeing of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core. See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
+
+\vspace{2cm}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -472,7 +490,7 @@ With RocketChip, there exists a framework to ease the development of complete sy
 	\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
 
 	\bibitem{rcgen-tutorial}
-	Tutorial for the  Rocket Chip build system\\
+	Tutorial for the  Rocket Chip build system. Page 23ff outline how to develop a new tile.\\
 	\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
 
 	\bibitem{lowrisc}
@@ -505,6 +523,15 @@ With RocketChip, there exists a framework to ease the development of complete sy
 	\bibitem{tether}
 	Github issue about untethered operation of RocketChip\\
 	\url{https://github.com/ucb-bar/rocket-chip/issues/434}\\
+
+	\bibitem{axi}
+	The AXI Protocol (AXI), part of the Advanced Microcontroller Bus Architecture (AMBA) by ARM\\
+	\url{https://www.arm.com/products/system-ip/amba-specifications}\\
+	Specification, see (A1.1) (requires registration):\\
+	\url{http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0022b/index.html}\\
+	Specification (download from third party without registration):\\
+	\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
+
 
 
 \end{thebibliography}
