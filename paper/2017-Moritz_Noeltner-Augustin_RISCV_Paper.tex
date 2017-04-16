@@ -444,6 +444,15 @@ Using the TileLink and few ancilliarey signals as the only interface for each ti
 See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
 
 \subsubsection{TileLink}
+%{{{ Figure 3: TileLink transactions
+
+\begin{figure}%[!t]
+	\centering
+	\inputimage{image3}
+	\caption{An example of TileLink request and release interactions.}
+	\label{tile-transfer}
+\end{figure}
+%}}}
 The physical bus sytem used within the processor is divided into 4 blocks, each with independent synchronisation, data, address, source, size, mask, parameter and opcode signals, implementing two full-duplex paths.
 The widths of these signals vary in different parts of the processor. For the Rocket tile in default configuration, there are two TileLink interfaces (io\_cached and io\_uncached) with a width of around 440 each.
 
@@ -454,31 +463,46 @@ TileLink is the cache coherence protocol on top of the physical bus system that 
 	\item[\texttt{Manager}] which tracks and controls the access and data flow of the cache blocks.
 \end{description}
 An agent can also fit into both categories. For example, the L2 cache will appear as a client to caches farther out (or the memory), while managing its clients the L1 caches.
-
-
-
-\begin{description}[\IEEEsetlabelwidth{\texttt{Manager}}\IEEEusemathlabelsep]
-	\item[\texttt{Client}] which manipulates data in cache blocks, or a
-	\item[\texttt{Manager}] which tracks and controls the access and data flow of the cache blocks.
+TileLink specifies 5 basic operations, called channels:
+\begin{description}[\IEEEsetlabelwidth{\texttt{Release}}\IEEEusemathlabelsep]
+		\label{tilelink-channels}
+	\item[\texttt{Acquire}] For getting permissions on a cache block and writing back data
+	\item[\texttt{Probe}] To find out if a client holds a certain cache block
+	\item[\texttt{Release}] Response to a probe. Returns permissions for a cache block along with its changed data
+	\item[\texttt{Grant}] Provide permissions and data for a cache block or acknowledge a release
+	\item[\texttt{Finish}] Used as final acknowledgement after receiving a Grant to allow ordering transactions.
 \end{description}
+Figure~\ref{tile-transfer} gives an example of TileLink operations: Several \texttt{Clients} are managed by a higher-level \texttt{Manager} which is itself a client to the memory\footnote{There may be other managers --with other clients-- that are siblings to the shown \texttt{Manager}, if the \texttt{Memory} is a Manager instead.}.
+In the first shown transaction \texttt{Client0}, which may be a DMA engine or a processor core, requests a cache block. As a result, the \texttt{Manager} sends \texttt{Probe} messages to all \{Clients} under its control.
+At this point, there are two possibilities:
+\begin{itemize}
+	\item No \texttt{Client} holds the requested cache block.\\
+		The \texttt{Clients} indicate this in their \texttt{Release} response and after receiving all negative responses, the \texttt{Manager} requests the block from \texttt{Memory}.
+		When receiving the \texttt{Grant} with the cache data, it forwards it to \texttt{Client0}. On reception, \texttt{Client0} sends a \texttt{Finish} message\footnote{\label{no-finish-propagation}The \texttt{Manager} does not need to pass the \texttt{Finish} to a higher-level Manager if the used network }.
+	\item One of the other \{Clients} holds the requested cache block.\\
+		It will release its hold of the cache block and return clobbered data with its \texttt{Release} message.
+		The \texttt{Manager} now has the data and permissions for the cache block, so it can directly issue a \texttt{Grant} to \texttt{Client0} without contacting \texttt{Memory}. Like in the first case, \texttt{Client0} replies with a \texttt{Finish} message.\footnoteref{no-finish-propagation}
+\end{itemize}
+If \texttt{Manager} implemented a directory, it would know if/which one of its \texttt{Clients} holds a requested cache block and therefore would not need to send the \texttt{Probes} to the other \texttt{Clients}, thereby saving bandwidth and minimising response time.
+
+\textbf{TODO: Second transaction}
+
+There are some contraints that apply at runtime:
+\begin{itemize}
+	\item If the different channels share the same physical link, preemption rules must be followed to avoid a deadlock situation: Each channel listed in \ref{tilelink-channels} must have priority over the channels listed above it (So that \texttt{Finish} has highest priority and is always sent first.
+	\item A \texttt{Manager} must wait for transactions on a block to be finished before accepting new requests on that block unless it can merge the results of the different transactions.
+	\item A \texttt{Client} cannot release and respond to a \texttt{Probe} if there is still an outstanding voluntary \texttt{Release} on that block.
+
+\end{itemize}
 
 
 
-
-%{{{ Figure 3: TileLink transactions
-
-\begin{figure}%[!t]
-	\centering
-	\inputimage{image3}
-	\caption{An example of TileLink request and release interactions.}
-	\label{til-transfer}
-\end{figure}
-%}}}
+\subsubsection{Advanced eXtensible Interface}\\
+\textbf{TODO}
 
 
-
-\vspace{2cm}
-\lipsum
+%\vspace{2cm}
+%\lipsum
 
 
 %}}}
