@@ -358,9 +358,13 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 				...
 			endmodule
 		\end{minted}
+		\vspace*{1mm}
 		\caption{The instantiated SRAMs for the 2-way configuration.}
 		\label{srams-2-way}
 	\end{subtable}
+	\newline
+	\vspace*{7mm}
+	\newline
 	\begin{subtable}[b]{0.9\linewidth}
 		%4-way:
 		%tag                   index  WS  BS
@@ -400,6 +404,7 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 				...
 			endmodule
 		\end{minted}
+		\vspace*{1mm}
 		\caption{The instantiated SRAMs for the 4-way configuration.}
 		\label{srams-4-way}
 	\end{subtable}
@@ -415,7 +420,6 @@ Since such an implementation will be forced to always use the next bigger (wider
 
 Looking at the different iterations of generated code, some key modules like the tiles and caches do not seem to change much.
 For the rest of the modules, instantiations change considerably when changing the parameters, so hand-writing code to interface to anything within the core except specified interfaces would seem rather unwise.
-
 %}}}
 
 %{{{
@@ -434,11 +438,29 @@ Save the clock, reset and interrupt lines it consists of the debug interface and
 Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advaced eXtensible Interface (AXI) specified by ARM\cite{axi}.
 AMBA and AXI are well known open standards not only with many peripherals readily available as IP but also good support for new development\cite{axi-tools}.
 
-The internal bus system uses TileLink, which is a bus specific to RocketChip and connects the tiles, caches and other core components.
-In standard configuration, it consists of two full-duplex, 64-bit data paths.
-Using the TileLink and few ancilliarey signals as the only interface for each tile allows easy exchangeing of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
+The internal bus system uses TileLink\cite{tilelink}, which is specific to RocketChip and connects the tiles, caches and other core components.
+%In standard configuration, the bus consists of two full-duplex, 64-bit data paths.
+Using the TileLink and few ancilliarey signals as the only interface for each tile allows easy exchanging of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
 See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
 
+\subsubsection{TileLink}
+The physical bus sytem used within the processor is divided into 4 blocks, each with independent synchronisation, data, address, source, size, mask, parameter and opcode signals, implementing two full-duplex paths.
+The widths of these signals vary in different parts of the processor. For the Rocket tile in default configuration, there are two TileLink interfaces (io\_cached and io\_uncached) with a width of around 440 each.
+
+TileLink is the cache coherence protocol on top of the physical bus system that connects different agents who participate in a coherent memory model. From TileLinks' point of view, each agent is either a
+
+\begin{description}[\IEEEsetlabelwidth{\texttt{Manager}}\IEEEusemathlabelsep]
+	\item[\texttt{Client}] which manipulates data in cache blocks, or a
+	\item[\texttt{Manager}] which tracks and controls the access and data flow of the cache blocks.
+\end{description}
+An agent can also fit into both categories. For example, the L2 cache will appear as a client to caches farther out (or the memory), while managing its clients the L1 caches.
+
+
+
+\begin{description}[\IEEEsetlabelwidth{\texttt{Manager}}\IEEEusemathlabelsep]
+	\item[\texttt{Client}] which manipulates data in cache blocks, or a
+	\item[\texttt{Manager}] which tracks and controls the access and data flow of the cache blocks.
+\end{description}
 
 
 
@@ -484,8 +506,7 @@ Rocket and Boom are open source implementations of RISCV processor cores develop
 
 In this paper, RocketChip was examined, the steps for creating new configurations were laid out, the propagation of the configuration options in Chisel into the generated Verilog code was tested and the relevant internal and external bus interfaces were described.
 
-When 
-
+%Considering the relatively volatile nature of the 
 
 
 
@@ -499,16 +520,16 @@ When
 %{{{
 \begin{thebibliography}{1}
 	\bibitem{riscv}
-	\url{https://www.youtube.com/watch?v=QTYiH1Y5UV0} At time 17:55
+		\url{https://www.youtube.com/watch?v=QTYiH1Y5UV0} At time 17:55
 	\bibitem{rcgen}
-	Asanovi\'c, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
-	The Rocket Chip Generator.\\
-	Technical Report No. UCB/EECS--2016--17, EECS Department, University of California, Berkeley.\\
-	\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
+		Asanovi\'c, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
+		The Rocket Chip Generator.\\
+		Technical Report No. UCB/EECS--2016--17, EECS Department, University of California, Berkeley.\\
+		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
 
 	\bibitem{rcgen-tutorial}
-	Tutorial for the  Rocket Chip build system. Page 23ff outline how to develop a new tile.\\
-	\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
+		Tutorial for the  Rocket Chip build system. Page 23ff outline how to develop a new tile.\\
+		\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
 
 	\bibitem{lowrisc}
 		lowRISC: \url{http://www.lowrisc.org/}\\
@@ -529,35 +550,38 @@ When
 	\bibitem{ucb}
 		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}\\
 	\bibitem{rc_github}
-	The RocketChip github pages\\
-	\url{https://github.com/ucb-bar/rocket-chip}\\
-	\url{https://github.com/ucb-bar/project-template}\\
+		The RocketChip github pages\\
+		\url{https://github.com/ucb-bar/rocket-chip}\\
+		\url{https://github.com/ucb-bar/project-template}\\
 
 	\bibitem{boom_github}
-	The Berkeley Out Of Order Machine github page\\
-	\url{https://github.com/ucb-bar/riscv-boom}\\
+		The Berkeley Out Of Order Machine github page\\
+		\url{https://github.com/ucb-bar/riscv-boom}\\
 
 	\bibitem{tether}
-	Github issue about untethered operation of RocketChip\\
-	\url{https://github.com/ucb-bar/rocket-chip/issues/434}\\
+		Github issue about untethered operation of RocketChip\\
+		\url{https://github.com/ucb-bar/rocket-chip/issues/434}\\
 
 	\bibitem{axi}
-	The AXI Protocol (AXI), part of the Advanced Microcontroller Bus Architecture (AMBA) by ARM\\
-	\url{https://www.arm.com/products/system-ip/amba-specifications}\\
-	Specification, see (A1.1) (requires registration):\\
-	\url{http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0022b/index.html}\\
-	Specification (download from third party without registration):\\
-	\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
+		AMBA® AXI™ and ACE™ Protocol Specification, ARM Limited 2011\\
+		\url{https://www.arm.com/products/system-ip/amba-specifications}\\
+		Specification, see (A1.1) (requires registration):\\
+		\url{http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0022b/index.html}\\
+		Specification (download from third party without registration):\\
+		\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
 
 	\bibitem{axi-tools}
-	AMBA AXI Accelerated Verification IP (VIP) by Cadence:\\
-	\url{https://ip.cadence.com/ipportfolio/verification-ip/accelerated-vip/arm-amba-2/amba-axi-accelerated-vip}\\
-	AXI Interconnect support by Xilinx:\\
-	\url{https://www.xilinx.com/products/intellectual-property/axi_interconnect.html}\\
-	Examplary listing of available IP cores:\\
-	\url{https://www.design-reuse.com/sip/amba-axi-c-288/}\\
+		AMBA AXI Accelerated Verification IP (VIP) by Cadence:\\
+		\url{https://ip.cadence.com/ipportfolio/verification-ip/accelerated-vip/arm-amba-2/amba-axi-accelerated-vip}\\
+		AXI Interconnect support by Xilinx:\\
+		\url{https://www.xilinx.com/products/intellectual-property/axi_interconnect.html}\\
+		Examplary listing of available IP cores:\\
+		\url{https://www.design-reuse.com/sip/amba-axi-c-288/}\\
 
 
+	\bibitem{tilelink}
+		The TileLink Specification, Version 0.3.3\\
+		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8/pub}\\
 
 \end{thebibliography}
 \enlargethispage{-5in}
