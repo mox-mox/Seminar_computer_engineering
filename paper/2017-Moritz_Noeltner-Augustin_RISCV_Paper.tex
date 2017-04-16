@@ -248,7 +248,8 @@ Listing~\ref{rcmake} shows the steps to build the emulator and generate the veri
 
 The generated verilog code is placed into a single file of around 11MB (for \texttt{DefaultConfig}) and includes around 300 verilog modules.
 However, the generated code does not only not use any generics like parameterised modules but also involves numerous verbatim copies of the same modules with only the name differing e.g. AsyncResetRegVec\_1..57 (also in \texttt{DefaultConfig}).
-Furthermore, the verilog code uses distictive wires for every connection. While this point-to-point connection scheme probably simplifies the generator code and allows to immediately know which output is driving a certain signal, it renders the code very hard to read as signals can go by many different names although they are connected either directly or through instantiated submodules\footnote{e.g. the clock signal in \texttt{ExampleRocketTop} which is input to the module by the name \texttt{clock}, is connected to (and on another place assigned to) the wire texttt{socBus\_clock}, and assigned to \texttt{AXI4Fragmenter\_1\_clock}, \texttt{AXI4ToTL\_1\_clock}, \texttt{AsyncQueueSink\_1\_1\_clock}, \texttt{AsyncQueueSource\_1\_1\_clock}, \texttt{TLMonitor\_40..52\_clock}, \texttt{TLToAXI4\_2..3\_clock}, \texttt{TLWidthWidget\_2\_clock}, \texttt{bootrom\_TLAtomicAutomata\_clock}, \texttt{bootrom\_TLFragmenter\_clock}, \texttt{bootrom\_TLWidthWidget\_clock}, \texttt{bootrom\_clock}, \texttt{coreplex\_clock}, \texttt{extInterruptXing\_clock}, \texttt{intBus\_clock}, \texttt{l1tol2\_TLSourceShrinker\_clock}, \texttt{l1tol2\_TLWidthWidget\_clock}, \texttt{l2\_clock} and \texttt{peripheryBus\_clock}.}.
+Furthermore, the verilog code uses distictive wires for every connection.
+While this point-to-point connection scheme probably simplifies the generator code and allows to immediately know which output is driving a certain signal, it renders the code very hard to read as signals can go by many different names although they are electrically connected either directly or through instantiated submodules\footnote{e.g. the clock signal in \texttt{ExampleRocketTop} which is input to the module by the name \texttt{clock}, is connected to (and on another place assigned to) the wire texttt{socBus\_clock}, and assigned to \texttt{AXI4Fragmenter\_1\_clock}, \texttt{AXI4ToTL\_1\_clock}, \texttt{AsyncQueueSink\_1\_1\_clock}, \texttt{AsyncQueueSource\_1\_1\_clock}, \texttt{TLMonitor\_40..52\_clock}, \texttt{TLToAXI4\_2..3\_clock}, \texttt{TLWidthWidget\_2\_clock}, \texttt{bootrom\_TLAtomicAutomata\_clock}, \texttt{bootrom\_TLFragmenter\_clock}, \texttt{bootrom\_TLWidthWidget\_clock}, \texttt{bootrom\_clock}, \texttt{coreplex\_clock}, \texttt{extInterruptXing\_clock}, \texttt{intBus\_clock}, \texttt{l1tol2\_TLSourceShrinker\_clock}, \texttt{l1tol2\_TLWidthWidget\_clock}, \texttt{l2\_clock} and \texttt{peripheryBus\_clock}.}.
 
 
 
@@ -405,20 +406,23 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 \end{table}
 %}}}
 
-Looking at the generated code shown in listing~\ref{srams}, it can be verified, that indeed SRAMs of the expected capacities are created.
+Looking at the generated code shown in listing~\ref{srams}, it can be verified, that SRAMS of the expected capacities are indeed created.
 However the two and four tag SRAMs are merged into a big single two- and four-port SRAM respectively.
 The data SRAMs use a narrower but deeper storage array, providing word-wise access but retaining the correct capacity. The required capacity per cache is the same for both configurations so the same SRAM gets instantiated.
-The used SRAM verilog modules get created by the script \texttt{\$RC/vsim/vlsi\_mem\_gen} which per default generates behavioural descriptions of the requested SRAMs.
+The used SRAM verilog modules get created by the script \texttt{\$RC/vsim/vlsi\_mem\_gen}, which per default, generates behavioural descriptions of the requested SRAMs.
 For an actual implementation, this script should be adapted to generate verilog wrappers for actually available SRAM blocks.
-Since such an implementation will be forced to always use the next bigger (wider and/or deeper) available SRAM type, it might be interesting to dimension the cache organisation accordingly to maximise the cache parameters within the used SRAMs.
-asdfasdfasdfasasdfaaasiiiiiiiiifsfadsfasdfasdfasfasdfasdfasdjf;lkajdsf;lkjadsf;lksajfd;lkajsdf;a;dsfjasdflasdfljsadlfjsal;djflksajdflkasjdf;lakjsdf;lajsfd;ljasd;lfja;lsjfljsadflksadkjfhkjsahfkjahsdkjfhsadhfkjahsdfjhiuehasdfahsdfjhakjsdhfhwiuehfadsifuuewhfkjafkjahsfiuhaksd;lfjz;ldskjflawkjfoijqjalkzjfl;kzjsfoiawfzsdflkj;lkj;lkjk;ljasdfasdfasd.
+Since such an implementation will be forced to always use the next bigger (wider and/or deeper) available SRAMs, it might be beneficial to dimension the cache accordingly to maximise the cache parameters within the used SRAMs.
+
+Looking at the different iterations of generated code, some key modules like the tiles and caches do not seem to change much.
+For the rest of the modules, instantiations change considerably when changing the parameters, so hand-writing code to interface to anything within the core except specified interfaces would seem rather unwise.
+
 %}}}
 
 %{{{
 \subsection{Interfaces}
-%{{{
+%{{{ Figure 2: RocketChip Busses
+
 \begin{figure}%[!t]
-	\fourwayfalse
 	\centering
 	\inputimage{image4}
 	\caption{The principal busses in the RocketChip. The dashed parts are possible periphery modules and not part of RocketChip.}
@@ -428,28 +432,30 @@ asdfasdfasdfasasdfaaasiiiiiiiiifsfadsfasdfasdfasfasdfasdfasdjf;lkajdsf;lkjadsf;l
 While the internals of the generated RocketChip vary strongly depending on the configuration options, the external interface is more static.
 Save the clock, reset and interrupt lines it consists of the debug interface and some high speed data busses.
 Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advaced eXtensible Interface (AXI) specified by ARM\cite{axi}.
+AMBA and AXI are well known open standards not only with many peripherals readily available as IP but also good support for new development\cite{axi-tools}.
 
-The internal bus system uses TileLink, which is a bus specific to RocketChip and connects the tiles, caches and other core components. In standard configuration, it consists of two full-duplex, 64-bit data paths.
-Using the TileLink and few ancilliarey signals as the only interface for each tile allows easy exchangeing of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core. See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
+The internal bus system uses TileLink, which is a bus specific to RocketChip and connects the tiles, caches and other core components.
+In standard configuration, it consists of two full-duplex, 64-bit data paths.
+Using the TileLink and few ancilliarey signals as the only interface for each tile allows easy exchangeing of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
+See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
+
+
+
+
+
+%{{{ Figure 3: TileLink transactions
+
+\begin{figure}%[!t]
+	\centering
+	\inputimage{image3}
+	\caption{An example of TileLink request and release interactions.}
+	\label{til-transfer}
+\end{figure}
+%}}}
+
+
 
 \vspace{2cm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \lipsum
 
 
@@ -473,7 +479,18 @@ Using the TileLink and few ancilliarey signals as the only interface for each ti
 \section{Conclusion}
 The RISCV instruction set architecture is an interesting new player in the field of general purpose ISAs.
 It has sparked interest by a broad spectrum of players spanning from research facilities over commercial chip vendors to state-owned defense projects with several implementations in the process of reaching or having reached market-ready status and intensive use in the research field.
-With RocketChip, there exists a framework to ease the development of complete system-on-chip solutions
+
+Rocket and Boom are open source implementations of RISCV processor cores developed at the university of Berkely, as is RocketChip, a framework written in Chisel that can create processors using Rocket-, Boom- or custom cores.
+
+In this paper, RocketChip was examined, the steps for creating new configurations were laid out, the propagation of the configuration options in Chisel into the generated Verilog code was tested and the relevant internal and external bus interfaces were described.
+
+When 
+
+
+
+
+
+
 %}}}
 
 \bigskip
@@ -531,6 +548,14 @@ With RocketChip, there exists a framework to ease the development of complete sy
 	\url{http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0022b/index.html}\\
 	Specification (download from third party without registration):\\
 	\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
+
+	\bibitem{axi-tools}
+	AMBA AXI Accelerated Verification IP (VIP) by Cadence:\\
+	\url{https://ip.cadence.com/ipportfolio/verification-ip/accelerated-vip/arm-amba-2/amba-axi-accelerated-vip}\\
+	AXI Interconnect support by Xilinx:\\
+	\url{https://www.xilinx.com/products/intellectual-property/axi_interconnect.html}\\
+	Examplary listing of available IP cores:\\
+	\url{https://www.design-reuse.com/sip/amba-axi-c-288/}\\
 
 
 
