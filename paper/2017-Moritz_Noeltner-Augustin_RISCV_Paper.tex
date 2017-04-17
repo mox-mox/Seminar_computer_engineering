@@ -135,20 +135,20 @@ University of Heidelberg, ZITI}
 \IEEEPARstart{C}{omputer} technology has seen the rise and fall of many instruction set architectures (ISAs) over time.
 Proprietary ISAs not only lead to fragmentation of the CPU market as companies cannot easily use the already existing ISAs of their competitors, but are also vulnerable to extinction when their proprietor companies run into financial troubles.
 Along with design complexity and licensing issues, these considerations led \krste/ et al.\ in 2010 to decide upon creating a new and free ISA for their next round of research projects at the University of California Berkeley (UCB).
-This fifth reduced instruction set ISA developed at UCB, called RISC-V, is --unlike its predecessors-- not only meant for teaching but also actual implementation.
-With three supported word-widths (32, 64 and 128 bits\cite{riscv}), RISC-V is aimed at all possible computational environments ranging from small embedded systems up to full scale supercomputers.
+This fifth reduced instruction set ISA developed at UCB, called RISC-V\cite{riscv}, is --unlike its predecessors-- not only meant for teaching but also actual implementation.
+With three supported word-widths (32, 64 and 128 bits\cite{riscv-vid}), RISC-V is aimed at all possible computational environments ranging from small embedded systems up to full scale supercomputers.
 To facilitate widespread adoption, the ISA is licensed permissively, allowing use for academic and commercial use in open- and closed-source designs free of charge and now, roughly 6 years after its inception, RISC-V is used in a number of roles:
 
-%{{{ RISCV adopters TODO: citations
+%{{{ RISC-V adopters TODO: citations
 
 \begin{itemize}
 	\item The LowRISC project aims to become the ``linux of the hardware word''\cite{lowrisc}
-	\item SiFive and Open-V are creating custom silicon products\cite{sifive},~\cite{open-v}
+	\item SiFive\cite{sifive} and Open-V are creating custom silicon products\cite{open-v}
 	\item ETH Zurich and Università di Bologna cooperate to create a state-of-the-art low-power parallel processor (PULP) and a single-core microcontroller derived from that processor (PULPino)\cite{pulp}
 	\item IIT Madras creates a processor\cite{iid-madras}
 	\item NVIDIA will use the RISC-V ISA for the replacement of their Falcon processor\cite{nvidia}
 	\item A number of vendors create commercial soft and hard implementations\cite{riscv-commercial} %TODO: Better text
-	\item UCB uses RISC-V processors for research purposes as well as for teaching\cite{ucb}
+	\item UCB uses RISC-V processors for research\cite{ucb-science} and teaching purposes\cite{sodor}
 \end{itemize}
 %}}}
 %}}}
@@ -160,16 +160,22 @@ To facilitate widespread adoption, the ISA is licensed permissively, allowing us
 \begin{figure}[!t]
 	\centering
 	\includegraphics[width=3in]{rcov}
-	\caption{Overview of the components of RocketChip.\newline\hspace{\linewidth}\source{Image taken from~\cite{rcgen}}.}
+	\caption{Overview of the components of RocketChip.\newline\hspace{\linewidth}\source{Image taken from~\cite{rocket}}.}
 	\label{rcov}
 \end{figure}
 %}}}
-The UCB currently developes three lines of RISC-V processors, Sodor, Rocket and Boom.
-Sodor is a collection of simple processors for use in lectures, Rocket is a scalar in-order processor for personal applications and Boom is a superscalar out-of-order processor for high performance applications.
+The UCB currently developes three lines of 64-bit\footnote{The RV64I instruction \texttt{ADDIW}\cite[p.28]{riscv} is present in the decoding tables\cite{code-tables}.}  RISC-V processors, Sodor\cite{sodor}, a collection of simple processors for teaching, Rocket\cite[p.4]{rocket}, a scalar in-order processor, and Boom\cite{boom}, a superscalar out-of-order processor for high-performance applications.
 All three are written in Chisel (Creating Hardware in a Scala Embedded Language), a hardware description language --as the name implies-- embedded in Scala.
-Chisel allows compilation into three distinct target formats, the first of which is a cycle accurate \CC/ model for fast simulation and software development, the other targets are verilog code aimed at implementation in an FPGA or ASIC\@.
-For Rocket and Boom there is a generator framework that can create a whole parametrised system around the processor cores, called RocketChip.
-It will create one or more Rocket, Boom or custom cores, surround it with caches, optionally an FPU and accelerators to form one or more [compute-]tiles. Then the tiles are connected to a TileLink network. The CPU is finished by adding TileLink to AXI4 converters to provide a well known bus interface to the outside world. Figure~\ref{rcov} shows a schematic of the generated system.
+Chisel allows compilation into three distinct target formats: a cycle accurate \CC/ model for fast simulation and software development and verilog code aimed at implementation either in an FPGA or ASIC\@.
+For Rocket and Boom there is a generator framework that can create a whole parametrised system around the processor cores, called RocketChip\cite{rocket}.
+It will create one or more Rocket, Boom or custom cores, surround it with caches, optionally an FPU and accelerators to form one or more [compute-]tiles.
+This assembly is then completed with an interconnect and other components to form a complete CPU.
+%Then the tiles are connected to an interconnect network.
+%The CPU is finished by adding an bus interface to the outside world.
+%
+%Then the tiles are connected to an interconnect network.
+%The CPU is finished by adding TileLink to AXI4 converters to provide a well known bus interface to the outside world.
+Figure~\ref{rcov} shows a schematic of the generated system.
 
 
 %{{{
@@ -180,7 +186,7 @@ To build the default-configuration RocketChip, one only has to clone the reposit
 %{{{ RocketChip Build Steps (Listing I)
 
 \begin{table}
-	\caption{Build steps for RocketChip.\newline\hspace{\linewidth}Source: Collected from~\cite{rc_github} and~\cite{boom_github}.}
+	\caption{Build steps for RocketChip.\newline\hspace{\linewidth}Source: Collected from~\cite{rc-github} and~\cite{boom-github}.}
 	\begin{subtable}[b]{0.9\linewidth}
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{bash}
 			# $RC is some place in the file system
@@ -220,7 +226,7 @@ To build the default-configuration RocketChip, one only has to clone the reposit
 \end{table}
 %}}}
 
-If the environment variable RISCV is not set to point to a sane installation of the toolchain, the following build steps will fail, so the next part is building the RISCV-toolchain as shown in listing~\ref{rctoolchain}.
+If the environment variable \texttt{\$RISCV} is not set to point to a sane installation of the toolchain, the following build steps will fail, so the next part is building the RISC-V-toolchain as shown in listing~\ref{rctoolchain}.
 
 \subsection{Configurations}
 
@@ -472,6 +478,13 @@ TileLink specifies 5 basic operations, called channels:
 	\item[\texttt{Grant}] Provide permissions and data for a cache block or acknowledge a release
 	\item[\texttt{Finish}] Used as final acknowledgement after receiving a Grant to allow ordering transactions.
 \end{description}
+A number of behavioural constraints have to be implemented in the agents to ensure consistent, deadlock-free operation:
+\begin{itemize}
+	\item If the different channels share the same physical link, preemption rules must be followed to avoid a deadlock situation: Each channel listed in \ref{tilelink-channels} must have priority over the channels listed above it (So that \texttt{Finish} has highest priority and is always sent first.
+	\item A \texttt{Manager} must wait for transactions on a block to be finished before accepting new requests on that block unless it can merge the results of the different transactions.
+	\item A \texttt{Client} cannot release and respond to a \texttt{Probe} if there is still an outstanding voluntary \texttt{Release} on that block.
+\end{itemize}
+
 Figure~\ref{tile-transfer} gives an example of TileLink operations: Several \texttt{Clients} are managed by a higher-level \texttt{Manager} which is itself a client to the memory\footnote{There may be other managers --with other clients-- that are siblings to the shown \texttt{Manager}, if the \texttt{Memory} is a Manager instead.}.
 In the first shown transaction \texttt{Client0}, which may be a DMA engine or a processor core, requests a cache block. As a result, the \texttt{Manager} sends \texttt{Probe} messages to all \{Clients} under its control.
 At this point, there are two possibilities:
@@ -489,13 +502,6 @@ The second shown transaction is a voluntary release. \texttt{Client0} decides th
 The \texttt{Memory} acknowledges the voluntary release by issuing a \texttt{Grant} which the \texttt{Memory} passes to \texttt{Client0}.
 For a simple write to memory, the diagram would look the same except that instead of \texttt{Release}, \texttt{Client0} would send an \texttt{Acquire} message with the data and parameters indicating that it does not need to acquire hold of the affected cache block.
 
-There are some contraints that apply at runtime:
-\begin{itemize}
-	\item If the different channels share the same physical link, preemption rules must be followed to avoid a deadlock situation: Each channel listed in \ref{tilelink-channels} must have priority over the channels listed above it (So that \texttt{Finish} has highest priority and is always sent first.
-	\item A \texttt{Manager} must wait for transactions on a block to be finished before accepting new requests on that block unless it can merge the results of the different transactions.
-	\item A \texttt{Client} cannot release and respond to a \texttt{Probe} if there is still an outstanding voluntary \texttt{Release} on that block.
-
-\end{itemize}
 
 
 
@@ -525,10 +531,10 @@ There are some contraints that apply at runtime:
 
 %{{{
 \section{Conclusion}
-The RISCV instruction set architecture is an interesting new player in the field of general purpose ISAs.
+The RISC-V instruction set architecture is an interesting new player in the field of general purpose ISAs.
 It has sparked interest by a broad spectrum of players spanning from research facilities over commercial chip vendors to state-owned defense projects with several implementations in the process of reaching or having reached market-ready status and intensive use in the research field.
 
-Rocket and Boom are open source implementations of RISCV processor cores developed at the university of Berkely, as is RocketChip, a framework written in Chisel that can create processors using Rocket-, Boom- or custom cores.
+Rocket and Boom are open source implementations of RISC-V processor cores developed at the university of Berkely, as is RocketChip, a framework written in Chisel that can create processors using Rocket-, Boom- or custom cores.
 
 In this paper, RocketChip was examined, the steps for creating new configurations were laid out, the propagation of the configuration options in Chisel into the generated Verilog code was tested and the relevant internal and external bus interfaces were described.
 
@@ -546,17 +552,10 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 %{{{
 \begin{thebibliography}{1}
 	\bibitem{riscv}
+		Specification for RISC-V:\\
+		\url{https://riscv.org/specifications/}\\
+	\bibitem{riscv-vid}
 		\url{https://www.youtube.com/watch?v=QTYiH1Y5UV0} At time 17:55
-	\bibitem{rcgen}
-		Asanovi\'c, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
-		The Rocket Chip Generator.\\
-		Technical Report No. UCB/EECS--2016--17, EECS Department, University of California, Berkeley.\\
-		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
-
-	\bibitem{rcgen-tutorial}
-		Tutorial for the  Rocket Chip build system. Page 23ff outline how to develop a new tile.\\
-		\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
-
 	\bibitem{lowrisc}
 		lowRISC: \url{http://www.lowrisc.org/}\\
 	\bibitem{sifive}
@@ -573,14 +572,58 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 	\bibitem{riscv-commercial}
 		List of companies presenting commercial implementations of RISC-V at Embedded World 2017\\
 		\url{https://riscv.org/2017/03/risc-v-mainstream-ew2017/}
-	\bibitem{ucb}
+	\bibitem{ucb-science}
 		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}\\
-	\bibitem{rc_github}
+	\bibitem{sodor}
+		The Sodor processor collection:\\
+		\url{https://github.com/ucb-bar/riscv-sodor}\\
+	\bibitem{rc-github}
+		The Rocket Core is developed as part of RocketChip\\
+		\url{https://github.com/ucb-bar/rocket-chip}\\
+	\bibitem{rocket}
+		Asanović, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
+		The Rocket Chip Generator.\\
+		Technical Report No. UCB/EECS--2016--17, EECS Department, University of California, Berkeley.\\
+		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
+	\bibitem{boom}
+		Celio, Christopher and Patterson, David A. and Asanović, Krste\\
+		The Berkeley Out-of-Order Machine (BOOM): An Industry-Competitive, Synthesizable, Parameterized RISC-V Processor\\
+		Technical Report No. Celio:EECS-2015-167, EECS Department, University of California, Berkeley.\\
+		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2015/EECS-2015-167.pdf}\\
+
+	\bibitem{code-tables}
+		The decode tables for the three UCB developed RISC-v processors:
+		\url{https://github.com/ucb-bar/riscv-sodor/blob/master/src/common/instructions.scala#L39}\\
+		\url{https://github.com/ucb-bar/rocket-chip/blob/master/src/main/scala/rocket/IDecode.scala#L149}\\
+		\url{https://github.com/ucb-bar/riscv-boom/blob/master/src/main/scala/decode.scala#L123}\\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	\bibitem{rcgen-tutorial}
+		Tutorial for the  Rocket Chip build system. Page 23ff outline how to develop a new tile.\\
+		\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
+
+	\bibitem{rc-github}
 		The RocketChip github pages\\
 		\url{https://github.com/ucb-bar/rocket-chip}\\
 		\url{https://github.com/ucb-bar/project-template}\\
 
-	\bibitem{boom_github}
+	\bibitem{boom-github}
 		The Berkeley Out Of Order Machine github page\\
 		\url{https://github.com/ucb-bar/riscv-boom}\\
 
