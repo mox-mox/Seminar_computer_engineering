@@ -145,7 +145,7 @@ To facilitate widespread adoption, the ISA is licensed permissively, allowing us
 	\item The LowRISC project aims to become the ``linux of the hardware word''\cite{lowrisc}
 	\item SiFive\cite{sifive} and Open-V are creating custom silicon products\cite{open-v}
 	\item ETH Zurich and Università di Bologna cooperate to create a state-of-the-art low-power parallel processor (PULP) and a single-core microcontroller derived from that processor (PULPino)\cite{pulp}
-	\item IIT Madras creates a processor\cite{iid-madras}
+	\item IIT Madras is creating a processor\cite{iid-madras}
 	\item NVIDIA will use the RISC-V ISA for the replacement of their Falcon processor\cite{nvidia}
 	\item A number of vendors create commercial soft and hard implementations\cite{riscv-commercial} %TODO: Better text
 	\item UCB uses RISC-V processors for research\cite{ucb-science} and teaching purposes\cite{sodor}
@@ -164,7 +164,7 @@ To facilitate widespread adoption, the ISA is licensed permissively, allowing us
 	\label{rcov}
 \end{figure}
 %}}}
-The UCB currently developes three lines of 64-bit\footnote{The RV64I instruction \texttt{ADDIW}\cite[p.28]{riscv} is present in the decoding tables\cite{code-tables}.}  RISC-V processors, Sodor\cite{sodor}, a collection of simple processors for teaching, Rocket\cite[p.4]{rocket}, a scalar in-order processor, and Boom\cite{boom}, a superscalar out-of-order processor for high-performance applications.
+The UCB currently develops three lines of 64-bit\footnote{The RV64I instruction \texttt{ADDIW}\cite[p.28]{riscv} is present in the decoding tables\cite{code-tables}.}  RISC-V processors, Sodor\cite{sodor}, a collection of simple processors for teaching, Rocket\cite[p.4]{rocket}, a Scalar in-order processor, and Boom\cite{boom}, a superscalar out-of-order processor for high-performance applications.
 All three are written in Chisel (Creating Hardware in a Scala Embedded Language), a hardware description language --as the name implies-- embedded in Scala.
 Chisel allows compilation into three distinct target formats: a cycle accurate \CC/ model for fast simulation and software development and verilog code aimed at implementation either in an FPGA or ASIC\@.
 For Rocket and Boom there is a generator framework that can create a whole parametrised system around the processor cores, called RocketChip\cite{rocket}.
@@ -237,15 +237,15 @@ Available configuration options can be found in \texttt{\$(RC)/src/main/scala/co
 %{{{ RocketChip config options
 
 \begin{itemize}
-	\item What core[s] (Rocket | BOOM | Custom)
+	\item Which core[s] (Rocket | BOOM | Custom)
 	\item \#Tiles/Cores
-	\item Cache configuration (Associativity, ECC, replacement policy)
-	\item Debug hardware (\#Breakpoints, \#Performance Counters)
-	\item What floating point unit
-	\item What multiplication and division logic
-	\item What atomic instructions
-	\item Bootrom
-	\item TileLink config
+	\item Which Cache configuration (Associativity, ECC, replacement policy)
+	\item Which Debug hardware (\#Breakpoints, \#Performance Counters)
+	\item Which floating point unit
+	\item Which multiplication and division logic
+	\item Implement atomic instructions
+	\item Which Bootrom
+	\item Which TileLink configuration
 \end{itemize}
 %}}}
 These options are grouped into different build configurations which can be found in \texttt{\$RC/src/main/scala/rocketchip/Configs.scala}.
@@ -318,7 +318,7 @@ While this point-to-point connection scheme probably simplifies the generator co
 \end{table}
 %}}}
 \subsubsection{Creating a new Configuration}
-RocketChip configurations are written as scala code and inherit from the \texttt{Config} class defined in \texttt{\$RC/src/main/scala/config/Configs.scala}, which sets up some functionality including the '++' operator that is used to add the configuration options, or one of its child classes which already have some options set.
+RocketChip configurations are written as Scala code and inherit from the \texttt{Config} class defined in \texttt{\$RC/src/main/scala/config/Configs.scala}, which sets up some functionality including the '++' operator that is used to add the configuration options, or one of its child classes which already have some options set.
 To evaluate the propagation of different configuration options into the generated verilog code, two new configurations differing in cache associativity and size were created as shown in listing~\ref{new-configs} using the configurations options listed in listing~\ref{config-options}.
 \subsubsection{Analysis of configuration propagation}
 The instruction cache parameters were chosen for their simple observability. Unlike for example the TileLink configuration options, the cache parameters only affect one verilog module, ICache\_icache, and are relatively simple to check by examining the SRAM memories that are instantiated.
@@ -417,8 +417,8 @@ Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 by
 \end{table}
 %}}}
 
-Looking at the generated code shown in listing~\ref{srams}, it can be verified, that SRAMS of the expected capacities are indeed created.
-However the two and four tag SRAMs are merged into a big single two- and four-port SRAM respectively.
+Looking at the generated code shown in listing~\ref{srams}, it can be verified that SRAMS of the expected capacities are indeed created.
+However, the two and four tag SRAMs are merged into a big single two- and four-port SRAM respectively.
 The data SRAMs use a narrower but deeper storage array, providing word-wise access but retaining the correct capacity. The required capacity per cache is the same for both configurations so the same SRAM gets instantiated.
 The used SRAM verilog modules get created by the script \texttt{\$RC/vsim/vlsi\_mem\_gen}, which per default, generates behavioural descriptions of the requested SRAMs.
 For an actual implementation, this script should be adapted to generate verilog wrappers for actually available SRAM blocks.
@@ -440,13 +440,13 @@ For the rest of the modules, instantiations change considerably when changing th
 \end{figure}
 %}}}
 While the internals of the generated RocketChip vary strongly depending on the configuration options, the external interface is more static.
-Save the clock, reset and interrupt lines it consists of the debug interface and some high speed data busses.
+Save the clock, the reset and the interrupt lines, it consists of the debug interface and some high speed data busses.
 Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advaced eXtensible Interface (AXI) specified by ARM\cite{axi}.
 AMBA and AXI are well known open standards not only with many peripherals readily available as IP but also good support for new development\cite{axi-tools}.
 
 The internal bus system uses TileLink\cite{tilelink}, which is specific to RocketChip and connects the tiles, caches and other core components.
 %In standard configuration, the bus consists of two full-duplex, 64-bit data paths.
-Using the TileLink and few ancilliarey signals as the only interface for each tile allows easy exchanging of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
+Using the TileLink and few ancilliary signals as the only interface for each tile allows easy exchanging of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
 See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
 
 \subsubsection{TileLink}
@@ -534,7 +534,7 @@ For a simple write to memory, the diagram would look the same except that instea
 The RISC-V instruction set architecture is an interesting new player in the field of general purpose ISAs.
 It has sparked interest by a broad spectrum of players spanning from research facilities over commercial chip vendors to state-owned defense projects with several implementations in the process of reaching or having reached market-ready status and intensive use in the research field.
 
-Rocket and Boom are open source implementations of RISC-V processor cores developed at the university of Berkely, as is RocketChip, a framework written in Chisel that can create processors using Rocket-, Boom- or custom cores.
+Rocket and Boom are open-source implementations of RISC-V processor cores developed at the University of Berkeley, as is RocketChip, a framework written in Chisel that can create processors using Rocket-, Boom- or custom cores.
 
 In this paper, RocketChip was examined, the steps for creating new configurations were laid out, the propagation of the configuration options in Chisel into the generated Verilog code was tested and the relevant internal and external bus interfaces were described.
 
