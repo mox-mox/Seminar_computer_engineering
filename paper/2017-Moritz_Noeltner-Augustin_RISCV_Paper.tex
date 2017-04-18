@@ -19,7 +19,8 @@
 
 \usepackage{minted}
 \usepackage{lipsum}
-\usepackage{url}
+%\usepackage[hyphens]{url}
+\usepackage[obeyspaces, spaces]{url}
 \usepackage{stfloats}
 \fnbelowfloat
 
@@ -134,14 +135,14 @@ University of Heidelberg, ZITI}
 Proprietary ISAs not only lead to fragmentation of the CPU market as companies cannot easily use the already existing ISAs of their competitors, but are also vulnerable to extinction when their proprietor companies run into financial troubles.
 Along with design complexity and licensing issues, these considerations led \krste/ et al.\ in 2010 to decide upon creating a new and free ISA for their next round of research projects at the University of California Berkeley (UCB).
 This fifth reduced instruction set ISA developed at UCB, called RISC-V\cite{riscv}, is --unlike its predecessors-- not only meant for teaching but also actual implementation.
-With three supported word-widths (32, 64 and 128 bits\cite{riscv-vid}), RISC-V is aimed at all possible computational environments ranging from small embedded systems up to full scale supercomputers.
+With three supported word-widths (32, 64 and 128 bits\cite[Time: 17:55]{riscv-vid}), RISC-V is aimed at all possible computational environments ranging from small embedded systems up to full scale supercomputers.
 To facilitate widespread adoption, the ISA is licensed permissively, allowing use for academic and commercial use in open- and closed-source designs free of charge and now, roughly 6 years after its inception, RISC-V is used in a number of roles:
 
 %{{{ RISC-V adopters TODO: citations
 
 \begin{itemize}
 	\item The LowRISC project aims to become the ``linux of the hardware word''\cite{lowrisc}
-	\item SiFive\cite{sifive} and Open-V are creating custom silicon products\cite{open-v}
+	\item SiFive\cite{sifive} and OnChip are creating custom silicon products\cite{open-v}
 	\item ETH Zurich and Università di Bologna cooperate to create a state-of-the-art low-power parallel processor (PULP) and a single-core microcontroller derived from that processor (PULPino)\cite{pulp}
 	\item IIT Madras is creating a processor\cite{iid-madras}
 	\item NVIDIA will use the RISC-V ISA for the replacement of their Falcon processor\cite{nvidia}
@@ -441,15 +442,6 @@ To support untetherd operation, some form of non-volatile program memory needs t
 
 %{{{
 \subsubsection{TileLink}
-%{{{ Figure 3: TileLink transactions
-
-\begin{figure}%[!t]
-	\centering
-	\inputimage{image3}
-	\caption{An example of TileLink request and release interactions.}
-	\label{tile-transfer}
-\end{figure}
-%}}}
 The internal bus system uses TileLink\cite{tilelink}, which is specific to RocketChip and connects the tiles, caches and other core components.
 %In standard configuration, the bus consists of two full-duplex, 64-bit data paths.
 Using the TileLink and few ancilliary signals as the only interface for each tile allows easy exchanging of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
@@ -488,6 +480,15 @@ A number of behavioural constraints have to be implemented in the agents to ensu
 \end{itemize}
 %}}}
 
+%{{{ Figure 3: TileLink transactions
+
+\begin{figure}%[!t]
+	\centering
+	\inputimage{image3}
+	\caption{An example of TileLink request and release interactions.}
+	\label{tile-transfer}
+\end{figure}
+%}}}
 Figure~\ref{tile-transfer} gives an example of TileLink operations: Several \texttt{Clients} are managed by a higher-level \texttt{Manager} which is itself a client to the memory\footnote{There may be other managers --with other clients-- that are siblings to the shown \texttt{Manager}, if the \texttt{Memory} is a Manager instead.}.
 In the first shown transaction \texttt{Client0}, which may be a DMA engine or a processor core, requests a cache block. As a result, the \texttt{Manager} sends \texttt{Probe} messages to all \{Clients} under its control.
 At this point, there are two possibilities:
@@ -510,11 +511,29 @@ For a simple write to memory, the diagram would look the same except that instea
 %}}}
 
 %{{{
+\color{red} % TODO: Remove
 \subsubsection{Advanced eXtensible Interface}
 Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advaced eXtensible Interface (AXI) specified by ARM\cite{axi}.
 AMBA and AXI are well known open standards not only with many peripherals readily available as IP but also good support for new development\cite{axi-tools}.
 
+From a hardware point of view, AXI uses a multi-channel interface where each channel is unidirectional. Signals pertaining to a channel are marked by a common prefix \footnote{In the port list of the RocketChip Verilog module, this is actually in the middle of the name, as the different AXI interfaces are also indicated with a prefix.}. These prefixes are:
+%{{{ Description: AXI Channel Prefixes
+%
+\begin{description}[\IEEEsetlabelwidth{\texttt{\ldots\_aw\_\ldots}}\IEEEusemathlabelsep]
+	\item[\texttt{\ldots\_aw\_\ldots}]   Write Address Channel
+	\item[\texttt{\ldots\_w\_\ldots}]    Write Data Channel
+	\item[\texttt{\ldots\_b\_\ldots}]    Write Response
+	\item[\texttt{\ldots\_ar\_\ldots}]   Read Address Channel
+	\item[\texttt{\ldots\_r\_\ldots}]    Read Data Channel
+	\item[\texttt{\ldots\_c\_\ldots}]    (Low Power Interface)
+\end{description}
+%}}}
+Each channel has handshake signals (\texttt{Valid}, \texttt{Ready} and \texttt{Last} for the two data channels) 
 
+Bus topologies are supported as are multilayered point-to-point connections and mixtures with multiple data- but a shared address channel.
+
+
+\color{black} % TODO: Remove
 
 %}}}
 %}}}
@@ -535,6 +554,7 @@ Rocket and Boom are open-source implementations of RISC-V processor cores develo
 
 In this paper, RocketChip was examined, the steps for creating new configurations were laid out, the propagation of the configuration options in Chisel into the generated Verilog code was tested and the relevant internal and external bus interfaces were described.
 %}}}
+\newpage
 
 \bigskip
 %\vfill
@@ -545,25 +565,33 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 		Specification for RISC-V:\\
 		\url{https://riscv.org/specifications/}
 	\bibitem{riscv-vid}
-		\url{https://www.youtube.com/watch?v=QTYiH1Y5UV0} At time 17:55
+		Video recording of Krste Asanović presenting RISC-V at MeetBSD 2016\\
+		\url{https://www.youtube.com/watch?v=QTYiH1Y5UV0}
 	\bibitem{lowrisc}
-		lowRISC: \url{http://www.lowrisc.org/}
+		The lowRISC project:\\
+		\url{http://www.lowrisc.org/}
 	\bibitem{sifive}
-		SiFive: \url{https://www.sifive.com/}
+		The SiFive company, founded by the creators of RISC-V:\\
+		\url{https://www.sifive.com/}
 	\bibitem{open-v}
-		Open-V: \url{https://www.crowdsupply.com/onchip/open-v}
+		Open-V, the Microcontroller developed by OnChip:\\
+		\url{http://hackaday.com/2016/10/10/the-journey-toward-a -completely-open-microcontroller/}\\
+		\url{https://www.crowdsupply.com/onchip/open-v}
 	\bibitem{pulp}
 		Pulp: \url{http://www.pulp-platform.org}\\
 		\url{http://iis-projects.ee.ethz.ch/index.php/PULP}
 	\bibitem{iid-madras}
-		IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}
+		\textbf{TODO} IID Madras:\\
+		\url{http://rise.cse.iitm.ac.in/shakti.html}
 	\bibitem{nvidia}
-		Nvidia: \url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}
+		Nvidias' anouncement to switch to RISC-V:\\
+		\url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}
 	\bibitem{riscv-commercial}
-		List of companies presenting commercial implementations of RISC-V at Embedded World 2017\\
+		List of companies presenting commercial implementations of \mbox{RISC-V} at Embedded World 2017\\
 		\url{https://riscv.org/2017/03/risc-v-mainstream-ew2017/}
 	\bibitem{ucb-science}
-		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}
+		Example of RISC-V used in research project at UC Berkeley:\\
+		\url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}
 	\bibitem{sodor}
 		The Sodor processor collection:\\
 		\url{https://github.com/ucb-bar/riscv-sodor}
@@ -578,7 +606,7 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 		Technical Report No. Celio:EECS-2015-167, EECS Department, University of California, Berkeley.\\
 		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2015/EECS-2015-167.pdf}
 	\bibitem{code-tables}
-		The decode tables for the three UCB developed RISC-v processors:
+		The decode tables for the three UCB developed RISC-v processors:\\
 		\url{https://github.com/ucb-bar/riscv-sodor/blob/master/src/common/instructions.scala#L39}\\
 		\url{https://github.com/ucb-bar/rocket-chip/blob/master/src/main/scala/rocket/IDecode.scala#L149}\\
 		\url{https://github.com/ucb-bar/riscv-boom/blob/master/src/main/scala/decode.scala#L123}
