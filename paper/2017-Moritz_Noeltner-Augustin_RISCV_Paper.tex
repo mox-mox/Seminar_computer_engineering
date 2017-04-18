@@ -92,8 +92,6 @@
 \newcommand\footnoteref[1]{\protected@xdef\@thefnmark{\ref{#1}}\@footnotemark}
 \makeatother
 
-
-
 \widowpenalties 1 5
 
 
@@ -170,18 +168,13 @@ Chisel allows compilation into three distinct target formats: a cycle accurate \
 For Rocket and Boom there is a generator framework that can create a whole parametrised system around the processor cores, called RocketChip\cite{rocket}.
 It will create one or more Rocket, Boom or custom cores, surround it with caches, optionally an FPU and accelerators to form one or more [compute-]tiles.
 This assembly is then completed with an interconnect and other components to form a complete CPU.
-%Then the tiles are connected to an interconnect network.
-%The CPU is finished by adding an bus interface to the outside world.
-%
-%Then the tiles are connected to an interconnect network.
-%The CPU is finished by adding TileLink to AXI4 converters to provide a well known bus interface to the outside world.
 Figure~\ref{rcov} shows a schematic of the generated system.
 
 
 %{{{
 \subsection{General Usage}
-The RocketChip is maintained in a Git repository.
-To build the default-configuration RocketChip, one only has to clone the repository, build the included GCC toolchain for RISC-V, and run ``\texttt{make}'' as shown in listing~\ref{rcclone}. For building a Boom-chip, the steps are identical except that one also has to checkout the ``\texttt{boom}'' branch of the same repository which then includes the Booms repo as a submodule.
+The RocketChip is maintained in a Git repository\cite{rc-github}.
+To build the default-configuration RocketChip, one only has to clone the repository, build the included GCC toolchain for RISC-V, and run ``\texttt{make}'' as shown in listing~\ref{rcclone}. For building a Boom-chip, the steps are identical except that one also has to checkout the ``\texttt{boom}'' branch of the same repository which then includes the Booms' repo\cite{boom-github} as a submodule.
 
 %{{{ RocketChip Build Steps (Listing I)
 
@@ -440,15 +433,13 @@ For the rest of the modules, instantiations change considerably when changing th
 \end{figure}
 %}}}
 While the internals of the generated RocketChip vary strongly depending on the configuration options, the external interface is more static.
-Save the clock, the reset and the interrupt lines, it consists of the debug interface and some high speed data busses.
-Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advaced eXtensible Interface (AXI) specified by ARM\cite{axi}.
-AMBA and AXI are well known open standards not only with many peripherals readily available as IP but also good support for new development\cite{axi-tools}.
+Save the clock, the reset and the interrupt lines, it consists only of the debug interface and some high speed data busses.
 
-The internal bus system uses TileLink\cite{tilelink}, which is specific to RocketChip and connects the tiles, caches and other core components.
-%In standard configuration, the bus consists of two full-duplex, 64-bit data paths.
-Using the TileLink and few ancilliary signals as the only interface for each tile allows easy exchanging of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
-See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
+Currently available open-sourced versions of RocketChip are tethered\cite{tether}, meaning they will need a host environment to start up.
+In this process, the debug interface is essential, for loading a program to be run.
+To support untetherd operation, some form of non-volatile program memory needs to be added and the bootloader has to be modified to load executable code from that memory.
 
+%{{{
 \subsubsection{TileLink}
 %{{{ Figure 3: TileLink transactions
 
@@ -459,17 +450,25 @@ See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
 	\label{tile-transfer}
 \end{figure}
 %}}}
+The internal bus system uses TileLink\cite{tilelink}, which is specific to RocketChip and connects the tiles, caches and other core components.
+%In standard configuration, the bus consists of two full-duplex, 64-bit data paths.
+Using the TileLink and few ancilliary signals as the only interface for each tile allows easy exchanging of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
+See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
+
 The physical bus sytem used within the processor is divided into 4 blocks, each with independent synchronisation, data, address, source, size, mask, parameter and opcode signals, implementing two full-duplex paths.
 The widths of these signals vary in different parts of the processor. For the Rocket tile in default configuration, there are two TileLink interfaces (io\_cached and io\_uncached) with a width of around 440 each.
 
 TileLink is the cache coherence protocol on top of the physical bus system that connects different agents who participate in a coherent memory model. From TileLinks' point of view, each agent is either a
+%{{{ Description: TileLink Agents
 
 \begin{description}[\IEEEsetlabelwidth{\texttt{Manager}}\IEEEusemathlabelsep]
 	\item[\texttt{Client}] which manipulates data in cache blocks, or a
 	\item[\texttt{Manager}] which tracks and controls the access and data flow of the cache blocks.
 \end{description}
+%}}}
 An agent can also fit into both categories. For example, the L2 cache will appear as a client to caches farther out (or the memory), while managing its clients the L1 caches.
 TileLink specifies 5 basic operations, called channels:
+%{{{ Itemize: TileLink Channels
 \begin{description}[\IEEEsetlabelwidth{\texttt{Release}}\IEEEusemathlabelsep]
 		\label{tilelink-channels}
 	\item[\texttt{Acquire}] For getting permissions on a cache block and writing back data
@@ -478,55 +477,53 @@ TileLink specifies 5 basic operations, called channels:
 	\item[\texttt{Grant}] Provide permissions and data for a cache block or acknowledge a release
 	\item[\texttt{Finish}] Used as final acknowledgement after receiving a Grant to allow ordering transactions.
 \end{description}
+%}}}
 A number of behavioural constraints have to be implemented in the agents to ensure consistent, deadlock-free operation:
+%{{{ Itemize: TileLink constraints
+
 \begin{itemize}
 	\item If the different channels share the same physical link, preemption rules must be followed to avoid a deadlock situation: Each channel listed in \ref{tilelink-channels} must have priority over the channels listed above it (So that \texttt{Finish} has highest priority and is always sent first.
 	\item A \texttt{Manager} must wait for transactions on a block to be finished before accepting new requests on that block unless it can merge the results of the different transactions.
 	\item A \texttt{Client} cannot release and respond to a \texttt{Probe} if there is still an outstanding voluntary \texttt{Release} on that block.
 \end{itemize}
+%}}}
 
 Figure~\ref{tile-transfer} gives an example of TileLink operations: Several \texttt{Clients} are managed by a higher-level \texttt{Manager} which is itself a client to the memory\footnote{There may be other managers --with other clients-- that are siblings to the shown \texttt{Manager}, if the \texttt{Memory} is a Manager instead.}.
 In the first shown transaction \texttt{Client0}, which may be a DMA engine or a processor core, requests a cache block. As a result, the \texttt{Manager} sends \texttt{Probe} messages to all \{Clients} under its control.
 At this point, there are two possibilities:
+%{{{ Itemize: TileLink transaction possibilities
+
 \begin{itemize}
 	\item No \texttt{Client} holds the requested cache block.\\
 		The \texttt{Clients} indicate this in their \texttt{Release} response and after receiving all negative responses, the \texttt{Manager} requests the block from \texttt{Memory}.
-		When receiving the \texttt{Grant} with the cache data, it forwards it to \texttt{Client0}. On reception, \texttt{Client0} sends a \texttt{Finish} message\footnote{\label{no-finish-propagation}The \texttt{Manager} does not need to pass the \texttt{Finish} to a higher-level Manager if the used network }.
-	\item One of the other \{Clients} holds the requested cache block.\\
+		When receiving the \texttt{Grant} with the cache data, it forwards it to \texttt{Client0}. On reception, \texttt{Client0} sends a \texttt{Finish} message\footnote{\label{no-finish-propagation}The \texttt{Manager} does not need to pass the \texttt{Finish} to a higher-level Manager if the used network guarantees ordering of the sent packages.}.
+	\item One of the other \texttt{Clients} holds the requested cache block.\\
 		It will release its hold of the cache block and return clobbered data with its \texttt{Release} message.
 		The \texttt{Manager} now has the data and permissions for the cache block, so it can directly issue a \texttt{Grant} to \texttt{Client0} without contacting \texttt{Memory}. Like in the first case, \texttt{Client0} replies with a \texttt{Finish} message.\footnoteref{no-finish-propagation}
 \end{itemize}
+%}}}
 If \texttt{Manager} implemented a directory, it would know if/which one of its \texttt{Clients} holds a requested cache block and therefore would not need to send the \texttt{Probes} to the other \texttt{Clients}, thereby saving bandwidth and minimising response time.
 
 The second shown transaction is a voluntary release. \texttt{Client0} decides that it no longer needs to hold a cache block under its control and releases it by sending a \texttt{Release} message with the clobbered data to the \texttt{Manager}, which in turn sends a \texttt{Release} to the \texttt{Memory}.
 The \texttt{Memory} acknowledges the voluntary release by issuing a \texttt{Grant} which the \texttt{Memory} passes to \texttt{Client0}.
 For a simple write to memory, the diagram would look the same except that instead of \texttt{Release}, \texttt{Client0} would send an \texttt{Acquire} message with the data and parameters indicating that it does not need to acquire hold of the affected cache block.
+%}}}
 
-
-
-
+%{{{
 \subsubsection{Advanced eXtensible Interface}
-\textbf{TODO}
+Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advaced eXtensible Interface (AXI) specified by ARM\cite{axi}.
+AMBA and AXI are well known open standards not only with many peripherals readily available as IP but also good support for new development\cite{axi-tools}.
 
+
+
+%}}}
+%}}}
+
+
+
+%}}}
 
 %\vspace{2cm}
-%\lipsum
-
-
-%}}}
-
-
-
-
-
-
-
-
-
-
-
-%}}}
-
 %\lipsum
 
 %{{{
@@ -537,13 +534,6 @@ It has sparked interest by a broad spectrum of players spanning from research fa
 Rocket and Boom are open-source implementations of RISC-V processor cores developed at the University of Berkeley, as is RocketChip, a framework written in Chisel that can create processors using Rocket-, Boom- or custom cores.
 
 In this paper, RocketChip was examined, the steps for creating new configurations were laid out, the propagation of the configuration options in Chisel into the generated Verilog code was tested and the relevant internal and external bus interfaces were described.
-
-%Considering the relatively volatile nature of the 
-
-
-
-
-
 %}}}
 
 \bigskip
@@ -553,107 +543,77 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 \begin{thebibliography}{1}
 	\bibitem{riscv}
 		Specification for RISC-V:\\
-		\url{https://riscv.org/specifications/}\\
+		\url{https://riscv.org/specifications/}
 	\bibitem{riscv-vid}
 		\url{https://www.youtube.com/watch?v=QTYiH1Y5UV0} At time 17:55
 	\bibitem{lowrisc}
-		lowRISC: \url{http://www.lowrisc.org/}\\
+		lowRISC: \url{http://www.lowrisc.org/}
 	\bibitem{sifive}
-		SiFive: \url{https://www.sifive.com/}\\
+		SiFive: \url{https://www.sifive.com/}
 	\bibitem{open-v}
 		Open-V: \url{https://www.crowdsupply.com/onchip/open-v}
 	\bibitem{pulp}
 		Pulp: \url{http://www.pulp-platform.org}\\
 		\url{http://iis-projects.ee.ethz.ch/index.php/PULP}
 	\bibitem{iid-madras}
-		IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}\\
+		IID Madras: \url{http://rise.cse.iitm.ac.in/shakti.html}
 	\bibitem{nvidia}
-		Nvidia: \url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}\\
+		Nvidia: \url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}
 	\bibitem{riscv-commercial}
 		List of companies presenting commercial implementations of RISC-V at Embedded World 2017\\
 		\url{https://riscv.org/2017/03/risc-v-mainstream-ew2017/}
 	\bibitem{ucb-science}
-		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}\\
+		UC Berkeley: \url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}
 	\bibitem{sodor}
 		The Sodor processor collection:\\
-		\url{https://github.com/ucb-bar/riscv-sodor}\\
-	\bibitem{rc-github}
-		The Rocket Core is developed as part of RocketChip\\
-		\url{https://github.com/ucb-bar/rocket-chip}\\
+		\url{https://github.com/ucb-bar/riscv-sodor}
 	\bibitem{rocket}
 		Asanović, Krste/Avizienis, Rimas/Bachrach, Jonathan et at. (2016)\\
 		The Rocket Chip Generator.\\
 		Technical Report No. UCB/EECS--2016--17, EECS Department, University of California, Berkeley.\\
-		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}\\
+		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}
 	\bibitem{boom}
 		Celio, Christopher and Patterson, David A. and Asanović, Krste\\
 		The Berkeley Out-of-Order Machine (BOOM): An Industry-Competitive, Synthesizable, Parameterized RISC-V Processor\\
 		Technical Report No. Celio:EECS-2015-167, EECS Department, University of California, Berkeley.\\
-		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2015/EECS-2015-167.pdf}\\
-
+		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2015/EECS-2015-167.pdf}
 	\bibitem{code-tables}
 		The decode tables for the three UCB developed RISC-v processors:
 		\url{https://github.com/ucb-bar/riscv-sodor/blob/master/src/common/instructions.scala#L39}\\
 		\url{https://github.com/ucb-bar/rocket-chip/blob/master/src/main/scala/rocket/IDecode.scala#L149}\\
-		\url{https://github.com/ucb-bar/riscv-boom/blob/master/src/main/scala/decode.scala#L123}\\
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	\bibitem{rcgen-tutorial}
-		Tutorial for the  Rocket Chip build system. Page 23ff outline how to develop a new tile.\\
-		\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
-
+		\url{https://github.com/ucb-bar/riscv-boom/blob/master/src/main/scala/decode.scala#L123}
 	\bibitem{rc-github}
 		The RocketChip github pages\\
 		\url{https://github.com/ucb-bar/rocket-chip}\\
-		\url{https://github.com/ucb-bar/project-template}\\
-
+		\url{https://github.com/ucb-bar/project-template}
 	\bibitem{boom-github}
 		The Berkeley Out Of Order Machine github page\\
-		\url{https://github.com/ucb-bar/riscv-boom}\\
-
+		\url{https://github.com/ucb-bar/riscv-boom}
 	\bibitem{tether}
 		Github issue about untethered operation of RocketChip\\
-		\url{https://github.com/ucb-bar/rocket-chip/issues/434}\\
-
+		\url{https://github.com/ucb-bar/rocket-chip/issues/434}
+	\bibitem{tilelink}
+		The TileLink Specification, Version 0.3.3\\
+		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8/pub}
+	\bibitem{rcgen-tutorial}
+		Tutorial for the  Rocket Chip build system. Page 23ff outline how to develop a new tile.\\
+		\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
 	\bibitem{axi}
 		AMBA® AXI™ and ACE™ Protocol Specification, ARM Limited 2011\\
 		\url{https://www.arm.com/products/system-ip/amba-specifications}\\
 		Specification, see (A1.1) (requires registration):\\
 		\url{http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0022b/index.html}\\
 		Specification (download from third party without registration):\\
-		\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}\\
-
+		\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}
 	\bibitem{axi-tools}
 		AMBA AXI Accelerated Verification IP (VIP) by Cadence:\\
 		\url{https://ip.cadence.com/ipportfolio/verification-ip/accelerated-vip/arm-amba-2/amba-axi-accelerated-vip}\\
 		AXI Interconnect support by Xilinx:\\
 		\url{https://www.xilinx.com/products/intellectual-property/axi_interconnect.html}\\
 		Examplary listing of available IP cores:\\
-		\url{https://www.design-reuse.com/sip/amba-axi-c-288/}\\
-
-
-	\bibitem{tilelink}
-		The TileLink Specification, Version 0.3.3\\
-		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8/pub}\\
-
+		\url{https://www.design-reuse.com/sip/amba-axi-c-288/}
 \end{thebibliography}
-\enlargethispage{-5in}
+%\enlargethispage{-5in}
 %}}}
 
 
