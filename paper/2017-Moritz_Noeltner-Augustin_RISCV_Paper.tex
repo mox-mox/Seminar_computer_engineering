@@ -511,7 +511,6 @@ For a simple write to memory, the diagram would look the same except that instea
 %}}}
 
 %{{{
-\color{red} % TODO: Remove
 \subsubsection{Advanced eXtensible Interface}
 Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advaced eXtensible Interface (AXI) specified by ARM\cite{axi}.
 AMBA and AXI are well known open standards not only with many peripherals readily available as IP but also good support for new development\cite{axi-tools}.
@@ -556,13 +555,13 @@ E.g. an 8 bit aligned write on a 64 bit bus will result in an atomic write, whil
 
 AXI verion 3 did support locked transactions where a master could request the interconnect to be locked. Since this was seldomly required use case that not only added significant complexity to the interconnect but also degraded the quality of service quarantees, this capability was removed from AXI4. If an AXI3 device actually issues a locked transaction in an AXI4 environment, the transaction will be treated as a normal transaction by the AXI4 devices, meaning that software relying on this feature will need to be changed.
 
+AXI supports some other, more advanced features like specifying the bufferability of a memory and peripheral devices that are only required to allow certain methods of access. Describing these would go beyond the scope of this paper.
 
+For lower performance peripherals like simple IO ports or UARTs, there is AMBA AXI4-Lite\cite[B1]{axi} a simplified version of AXI4.
+It supports neither bursts, nor transfers smaller than the bus size, nor exclusive access, the bus width is fixed to either 32 or 64 bits and --as there is no ID field-- all access have to be in order.
 
-
-
-
-\color{black} % TODO: Remove
-
+Interfacing between AXI and AXI-Lite only requires some logic to create the correct transaction IDs on the AXI side if the AXI part of the system can be designed to use only transactions that conform to the AXI-Lite subset when communicating with the AXI-Lite subsystem.
+For the other cases there is a Defined conversion mechanism\cite[B1.3]{AXI} to allow interfacing.
 %}}}
 %}}}
 
@@ -584,7 +583,6 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 %}}}
 
 \bigskip
-%\vfill
 
 %{{{
 \begin{thebibliography}{1}
@@ -668,7 +666,7 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 		Examplary listing of available IP cores:\\
 		\url{https://www.design-reuse.com/sip/amba-axi-c-288/}
 \end{thebibliography}
-%\enlargethispage{-5in}
+\enlargethispage{-5in}
 %}}}
 
 
