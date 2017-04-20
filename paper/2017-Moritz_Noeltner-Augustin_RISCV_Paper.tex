@@ -550,7 +550,7 @@ At this point, there are two possibilities:
 If \texttt{Manager} implemented a directory, it would know if/which one of its \texttt{Clients} holds a requested cache block and therefore would not need to send the \texttt{Probes} to the other \texttt{Clients}, thereby saving bandwidth and minimising response time.
 
 The second shown transaction is a voluntary release. \texttt{Client0} decides that it no longer needs to hold a cache block under its control and releases it by sending a \texttt{Release} message with the clobbered data to the \texttt{Manager}, which in turn sends a \texttt{Release} to the \texttt{Memory}.
-The \texttt{Memory} acknowledges the voluntary release by issuing a \texttt{Grant} which the \texttt{Memory} passes to \texttt{Client0}.
+The \texttt{Memory} acknowledges the voluntary release by issuing a \texttt{Grant} which the \texttt{Manager} passes to \texttt{Client0}.
 For a simple write to memory, the diagram would look the same except that instead of \texttt{Release}, \texttt{Client0} would send an \texttt{Acquire} message with the data and parameters indicating that it does not need to acquire hold of the affected cache block.
 %}}}
 
