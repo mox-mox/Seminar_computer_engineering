@@ -482,7 +482,7 @@ To support untetherd operation, some form of non-volatile program memory needs t
 The internal bus system uses TileLink\cite{tilelink}, which is specific to RocketChip and connects the tiles, caches and other core components.
 %In standard configuration, the bus consists of two full-duplex, 64-bit data paths.
 Using the TileLink and few ancilliary signals as the only interface for each tile allows easy exchanging of tiles, which is one of the key features allowing the BOOM project to use the RocketChip to create a full processor around their core.
-See \cite{rcgen-tutorial} for an overview on how to implement a new tile.
+See \cite[p.23 ff]{rcgen-tutorial} for an overview on how to implement a new tile.
 
 The physical bus sytem used within the processor is divided into 4 blocks, each with independent synchronisation, data, address, source, size, mask, parameter and opcode signals, implementing two full-duplex paths.
 The widths of these signals vary in different parts of the processor. For the Rocket tile in default configuration, there are two TileLink interfaces (io\_cached and io\_uncached) with a width of around 440 each.
@@ -611,7 +611,7 @@ For the other cases there is a Defined conversion mechanism\cite[B1.3]{axi} to a
 
 %}}}
 
-\enlargethispage*{2\baselineskip}
+%\enlargethispage*{1\baselineskip}
 %{{{
 \section{Conclusion}
 The RISC-V instruction set architecture is an interesting new player in the field of general purpose ISAs.
@@ -624,14 +624,12 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 
 %\bigskip
 %\enlargethispage*{2\baselineskip}
-%\enlargethispage{-5in}
 
 %{{{
 \begin{thebibliography}{1}
 	\bibitem{riscv}
 		Specification for RISC-V:\\
 		\url{https://riscv.org/specifications/}
-\enlargethispage{-5in}
 	\bibitem{riscv-vid}
 		Krste Asanović presenting RISC-V at Stanford University in 2014\\
 		\url{https://youtu.be/vB0FC1DZqUM}
@@ -656,7 +654,7 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 		Nvidias' anouncement to switch to RISC-V:\\
 		\url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}
 	\bibitem{riscv-commercial}
-		List of companies presenting commercial implementations of\\ %\mbox{RISC-V} at Embedded World 2017\\
+		List of companies presenting commercial implementations of \mbox{RISC-V} at Embedded World 2017\\
 		\url{https://riscv.org/2017/03/risc-v-mainstream-ew2017/}
 	\bibitem{ucb-science}
 		Example of RISC-V used in research project at UC Berkeley:\\
@@ -693,10 +691,10 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 		The TileLink Specification, Version 0.3.3\\
 		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8/pub}
 	\bibitem{rcgen-tutorial}
-		Tutorial for the  Rocket Chip build system. Page 23ff outline how to develop a new tile.\\
+		Tutorial for the  Rocket Chip build system.\\
 		\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
 	\bibitem{axi}
-		AMBA® AXI™ and ACE™ Protocol Specification, ARM Limited 2011\\
+		AMBA® AXI™ and ACE™ Protocol Specification, ARM 2011\\
 		\url{https://www.arm.com/products/system-ip/amba-specifications}\\
 		Specification, see (A1.1) (requires registration):\\
 		\url{http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0022b/index.html}\\

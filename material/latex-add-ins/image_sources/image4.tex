@@ -1,0 +1,85 @@
+
+
+%{{{
+\begin{tikzpicture}
+	\pic(TILE0) at ( 0,0)    {tile};
+	\node(dots) at (10,-1.5) {...};
+	\pic(TILE1) at (20,0)    {tile};
+	\pic(TILE2) at (35,0)    {tile};
+	\coordinate(TL) at (-7, -15);
+	\draw[thick] (TL) -- ++(49,0);
+
+	\draw[<->,thick,gray,shorten >=0.4] (TILE0I$.270) -- (TILE0I$.270 |- TL);
+	\draw[<->,thick,gray,shorten >=0.4] (TILE1I$.270) -- (TILE1I$.270 |- TL);
+	\draw[<->,thick,gray,shorten >=0.4] (TILE2I$.270) -- (TILE2I$.270 |- TL);
+
+	\draw[<->,thick,shorten >=0.4]      (TILE0D$.235) -- (TILE0D$.235 |- TL);
+	\draw[<->,thick,shorten >=0.4]      (TILE1D$.235) -- (TILE1D$.235 |- TL);
+	\draw[<->,thick,shorten >=0.4]      (TILE2D$.235) -- (TILE2D$.235 |- TL);
+
+	\node[rectangle,draw,align=center,text width=33,inner sep=1,minimum height=18] (CM0) at ( 0,-22)  {Coherence\\Manager};
+	\node(dots) at (10,-22) {...};
+	\node[rectangle,draw,align=center,text width=33,inner sep=1,minimum height=18] (CM1) at (20,-22)  {Coherence\\Manager};
+	\node[rectangle,draw,align=center,text width=33,inner sep=1,minimum height=18] (CM2) at (35,-22)  {Coherence\\Manager};
+
+	\draw[<->,thick,shorten >=0.4]      (CM0.north) -- (CM0.north |- TL);
+	\draw[<->,thick,shorten >=0.4]      (CM1.north) -- (CM1.north |- TL);
+	\draw[<->,thick,shorten >=0.4]      (CM2.north) -- (CM2.north |- TL);
+
+	\node[rectangle,draw,align=center,text width=33,inner sep=1,minimum height=18] (DBG) at (-8,-35)  {Debug Logic};
+
+
+
+
+	\node[rectangle,draw,align=center,text width=33,inner sep=1,minimum height=18] (ARB) at (17.5,-35)  {Arbiter};
+	\draw[<->, thick] (CM0.south) -- ++(0,-3) -| (ARB.130);
+	\draw[<->, thick] (CM1.south -| ARB.90) --  (ARB.90);
+	\draw[<->, thick] (CM2.south) -- ++(0,-3) -| (ARB.50);
+
+	\coordinate(TLA) at (-17, -43);
+	\draw[thick] (TLA) -- ++(75,0);
+	\draw[<->,thick,shorten <>=0.4]      (ARB.south) -- (ARB.south |- TLA);
+	\draw[<->,thick,shorten <>=0.4]      (DBG.south) -- (DBG.south |- TLA);
+
+	\coordinate(TLAL) at (50, -33);
+	\draw[thick] ($(TLAL)+(-5,0)$) -- ++(10,0);
+
+	\draw[<->,thick,gray,shorten >=0.4] (TILE0D$.305) -- ++(0,-5) -| ($ (TLAL) + (-2,0) $);
+	\draw[<->,thick,gray,shorten >=0.4] (TILE1D$.305) -- ++(0,-4) -| ($ (TLAL) + ( 0,0) $);
+	\draw[<->,thick,gray,shorten >=0.4] (TILE2D$.305) -- ++(0,-3) -| ($ (TLAL) + ( 2,0) $);
+
+	\draw[<->,thick,gray,shorten <>=0.4] (TLAL) -- (TLAL |- TLA);
+
+	\coordinate(AXI) at (-7, -53);
+	\draw[thick, blue, dashed] (AXI) -- ++(28,0);
+	\node[blue,font=\tiny] at (0,-51.5) {AXI};
+	\draw[<->,thick,shorten <>=0.4,blue, dashed]      (ARB.south |- TLA) -- (ARB.south |- AXI);
+
+	\coordinate(AXILite) at (27, -53);
+	\node[purple,font=\tiny] at (37,-51.5) {AXI-Lite};
+	\draw[thick, purple, dashed] (AXILite) -- ++(28,0);
+	\draw[<->,thick,purple,shorten <>=0.4, dashed] (TLAL |- TLA) -- (TLAL |- AXILite);
+
+
+	\node[rectangle,rounded corners,draw,align=center,text width=33,inner sep=1,minimum height=18,blue,dashed]   (ROM)  at ( 0,-65)  {Boot ROM};
+	\node[rectangle,rounded corners,draw,align=center,text width=33,inner sep=1,minimum height=18,blue,dashed]   (RAM)  at (15,-65)  {RAM};
+	\draw[<->,thick,shorten <>=0.4,blue, dashed]      (ROM.north) -- (ROM.north |- AXI);
+	\draw[<->,thick,shorten <>=0.4,blue, dashed]      (RAM.north) -- (RAM.north |- AXI);
+	\node[rectangle,rounded corners,draw,align=center,text width=33,inner sep=1,minimum height=18,purple,dashed] (UART) at (33,-65)  {UART};
+	\node[rectangle,rounded corners,draw,align=center,text width=33,inner sep=1,minimum height=18,purple,dashed] (SD)   at (48,-65)  {SD Card};
+	\draw[<->,thick,shorten <>=0.4,purple, dashed]      (UART.north) -- (UART.north |- AXILite);
+	\draw[<->,thick,shorten <>=0.4,purple, dashed]      (SD.north) -- (SD.north |- AXILite);
+	%\draw[red, dashed] (-10,-45) rectangle (58,10);
+
+
+	\node[black,align=center,font=\tiny] at (10,-15.0) {TileLink\\L2 Cache Bus};
+	\node[black,align=center,font=\tiny] at (10,-40.7) {Memory Bus};
+	\node[black,align=center,font=\tiny] at (23,-42.9) {TileLink\\AXI};
+	\node[gray,align=center,font=\tiny] at (44,-42.9) {TileLink\\AXI-Lite};
+	\node[gray,align=center,font=\tiny] at (54.5,-40.7) {IO Bus};
+	\node[gray,align=center,font=\tiny] at (50,-6.5) {TileLink\\for MMIO\\(uncached)};
+
+
+\end{tikzpicture}
+%}}}
+
