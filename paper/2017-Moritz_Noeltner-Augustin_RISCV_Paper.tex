@@ -200,8 +200,7 @@ All three are written in Chisel (Creating Hardware in a Scala Embedded Language)
 Chisel allows compilation into three distinct target formats: a cycle accurate \CC/ model for fast simulation and software development and verilog code aimed at implementation either in an FPGA or ASIC\@.
 For Rocket and Boom there is a generator framework that can create a whole parametrised system around the processor cores, called RocketChip\cite{rocket}.
 It will create one or more Rocket, Boom or custom cores, surround it with caches, optionally an FPU and accelerators to form one or more [compute-]tiles.
-This assembly is then completed with an interconnect and other components to form a complete CPU.
-Figure~\ref{rcov} shows a schematic of the generated system.
+This assembly is then completed with an interconnect, caches and other components to form a complete CPU as shown in the schematic in figure~\ref{rcov}.
 
 
 %{{{
@@ -213,6 +212,7 @@ To build the default-configuration RocketChip, one only has to clone the reposit
 
 \begin{table}
 	\caption{Build steps for RocketChip.\newline\hspace{\linewidth}Source: Collected from~\cite{rc-github} and~\cite{boom-github}.}
+		\label{rcclone}
 	\begin{subtable}[b]{0.9\linewidth}
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{bash}
 			# $RC is some place in the file system
@@ -224,7 +224,7 @@ To build the default-configuration RocketChip, one only has to clone the reposit
 			git submodule update --init --recursive
 		\end{minted}
 		\caption{Downloading and initialising.}
-		\label{rcclone}
+		%\label{rcclone}
 	\end{subtable}
 	\begin{subtable}[b]{0.9\linewidth}
 		\begin{minted}[fontsize=\small, gobble=3, tabsize=2]{bash}
@@ -252,7 +252,8 @@ To build the default-configuration RocketChip, one only has to clone the reposit
 \end{table}
 %}}}
 
-If the environment variable \texttt{\$RISCV} is not set to point to a sane installation of the toolchain, the following build steps will fail, so the next part is building the RISC-V-toolchain as shown in listing~\ref{rctoolchain}.
+%If the environment variable \texttt{\$RISCV} is not set to point to a sane installation of the toolchain, the following build steps will fail, so the next part is building the RISC-V-toolchain as shown in listing~\ref{rctoolchain}.
+If the environment variable \texttt{\$RISCV} is not set to point to a sane installation of the toolchain, the following build steps will fail, so building the RISC-V-toolchain as shown in listing~\ref{rctoolchain} is mandatory.
 
 \subsection{Configurations}
 
@@ -674,13 +675,14 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 		Technical Report No. Celio:EECS-2015-167, EECS Department, University of California, Berkeley.\\
 		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2015/EECS-2015-167.pdf}
 	\bibitem{code-tables}
-		The decode tables for the three UCB developed RISC-v processors:\\
+		Decode tables for the three UCB developed RISC-v processors:\\
 		\url{https://github.com/ucb-bar/riscv-sodor/blob/master/src/common/instructions.scala#L39}\\
 		\url{https://github.com/ucb-bar/rocket-chip/blob/master/src/main/scala/rocket/IDecode.scala#L149}\\
 		\url{https://github.com/ucb-bar/riscv-boom/blob/master/src/main/scala/decode.scala#L123}
 	\bibitem{rc-github}
 		The RocketChip github pages\\
-		\url{https://github.com/ucb-bar/rocket-chip}\\
+		%\url{https://github.com/ucb-bar/rocket-chip}\\
+		\url{https://github.com/ucb-bar/rocket-chip/tree/f1cb06142e28d837b6347fb09ea8de77e4d96d01}\\
 		\url{https://github.com/ucb-bar/project-template}
 	\bibitem{boom-github}
 		The Berkeley Out Of Order Machine github page\\
