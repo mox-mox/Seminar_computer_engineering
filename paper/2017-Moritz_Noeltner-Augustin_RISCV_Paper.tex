@@ -125,6 +125,7 @@
 
 
 
+% https://tex.stackexchange.com/questions/207705/how-to-get-information-about-remaining-free-space
 \newdimen\spaceleft
 \spaceleft=\textheight
 \multiply\spaceleft by -1
@@ -598,7 +599,7 @@ Detection of this capability is possible because a slave that does not support e
 Likewise, atomic access is supported as a concept.
 Devices in an atomicity group are designed to support the same maximum size of atomic memory updates.
 A write to one such device will update up to the bus width of bytes and address alignment atomically.
-E.g. an 8-bit aligned write on a 64 bit bus will result in an atomic write, while a write that is only aligned to 4 bits will only have 4 bits updated atomically. There does not seem to be a defined way to query the atomicity size of a device.
+E.g. an 8-byte aligned write on a 64 bit bus will result in an atomic write, while a write that is only aligned to 4 bits will only have 4 bits updated atomically. There does not seem to be a defined way to query the atomicity size of a device.
 
 AXI version 3 did support locked transactions where a master could request the interconnect to be locked. Since this was a seldomly required use case that not only added significant complexity to the interconnect but also degraded the quality of service guarantees, this capability was removed from AXI4. If an AXI3 device actually issues a locked transaction in an AXI4 environment, the transaction will be treated as a normal transaction by the AXI4 devices, meaning that software relying on this feature will need to be changed.
 
@@ -735,6 +736,7 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 		\url{https://ip.cadence.com/ipportfolio/verification-ip/accelerated-vip/arm-amba-2/amba-axi-accelerated-vip}\\
 		AXI Interconnect support by Xilinx:\\
 		\url{https://www.xilinx.com/products/intellectual-property/axi_interconnect.html}\\
+% https://tex.stackexchange.com/questions/207705/how-to-get-information-about-remaining-free-space
 \advance\spaceleft by \pagetotal
 \multiply\spaceleft by -1
 %\typeout{Space on last page:}
