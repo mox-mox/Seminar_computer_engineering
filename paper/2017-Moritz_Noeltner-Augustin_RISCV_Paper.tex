@@ -125,6 +125,9 @@
 
 
 
+\newdimen\spaceleft
+\spaceleft=\textheight
+\multiply\spaceleft by -1
 
 
 
@@ -282,7 +285,7 @@ Listing~\ref{rcmake} shows the steps to build the emulator and generate the veri
 The generated verilog code is placed into a single file of around 11MB (for \texttt{DefaultConfig}) and includes around 300 verilog modules.
 However, the generated code does not only not use any generics like parameterised modules but also involves numerous verbatim copies of the same modules with only the name differing e.g. AsyncResetRegVec\_1..57 (also in \texttt{DefaultConfig}).
 Furthermore, the verilog code uses distictive wires for every connection.
-While this point-to-point connection scheme probably simplifies the generator code and allows to immediately know which output is driving a certain signal, it renders the code very hard to read as signals can go by many different names although they are electrically connected either directly or through instantiated submodules\footnote{e.g. the clock signal in \texttt{ExampleRocketTop} which is input to the module by the name \texttt{clock}, is connected to (and on another place assigned to) the wire texttt{socBus\_clock}, and assigned to \texttt{AXI4Fragmenter\_1\_clock}, \texttt{AXI4ToTL\_1\_clock}, \texttt{AsyncQueueSink\_1\_1\_clock}, \texttt{AsyncQueueSource\_1\_1\_clock}, \texttt{TLMonitor\_40..52\_clock}, \texttt{TLToAXI4\_2..3\_clock}, \texttt{TLWidthWidget\_2\_clock}, \texttt{bootrom\_TLAtomicAutomata\_clock}, \texttt{bootrom\_TLFragmenter\_clock}, \texttt{bootrom\_TLWidthWidget\_clock}, \texttt{bootrom\_clock}, \texttt{coreplex\_clock}, \texttt{extInterruptXing\_clock}, \texttt{intBus\_clock}, \texttt{l1tol2\_TLSourceShrinker\_clock}, \texttt{l1tol2\_TLWidthWidget\_clock}, \texttt{l2\_clock} and \texttt{peripheryBus\_clock}.}.
+While this point-to-point connection scheme probably simplifies the generator code and allows to immediately know which output is driving a certain signal, it renders the code very hard to read as signals can go by many different names although they are electrically connected either directly or through instantiated submodules\footnote{e.g. the clock signal in \texttt{ExampleRocketTop} which is input to the module by the name \texttt{clock} and is electrically connected to \texttt{socBus\_clock}, \texttt{AXI4Fragmenter\_1\_clock}, \texttt{AXI4ToTL\_1\_clock}, \texttt{AsyncQueueSink\_1\_1\_clock}, \texttt{AsyncQueueSource\_1\_1\_clock}, \texttt{TLMonitor\_40..52\_clock}, \texttt{TLToAXI4\_2..3\_clock}, \texttt{TLWidthWidget\_2\_clock}, \texttt{bootrom\_TLAtomicAutomata\_clock}, \texttt{bootrom\_TLFragmenter\_clock}, \texttt{bootrom\_TLWidthWidget\_clock}, \texttt{bootrom\_clock}, \texttt{coreplex\_clock}, \texttt{extInterruptXing\_clock}, \texttt{intBus\_clock}, \texttt{l1tol2\_TLSourceShrinker\_clock}, \texttt{l1tol2\_TLWidthWidget\_clock}, \texttt{l2\_clock} and \texttt{peripheryBus\_clock}.}.
 
 
 
@@ -348,7 +351,7 @@ While this point-to-point connection scheme probably simplifies the generator co
 RocketChip configurations are written as Scala code and inherit from the \texttt{Config} class defined in \texttt{\$RC/src/main/scala/config/Configs.scala}, which sets up some functionality including the '++' operator that is used to add the configuration options, or one of its child classes which already have some options set.
 To evaluate the propagation of different configuration options into the generated verilog code, two new configurations differing in cache associativity and size were created as shown in listing~\ref{new-configs} using the configurations options listed in listing~\ref{config-options}.
 \subsubsection{Analysis of configuration propagation}
-The instruction cache parameters were chosen for their simple observability. Unlike for example the TileLink configuration options, the cache parameters only affect one verilog module, ICache\_icache, and are relatively simple to check by examining the SRAM memories that are instantiated.
+The instruction cache parameters were chosen for their simple observability. Unlike for example the TileLink configuration options, the cache parameters only affect one verilog module, \texttt{ICache\_icache}, and are relatively simple to check by examining the SRAM memories that are instantiated.
 For the 2-way configuration, the core of the cache can be expected to be two 32x21 bit tag SRAMs and two 32x512 bit (32x64 bytes) data SRAMs\footnote{\label{note-width}Or, of course a configuration of smaller width but the same capacity}.
 %Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 bytes) data SRAMs\footnotemark[\ref{note-width}] for the 4-way configuration.
 Likewise one would expect four 64x21 bit tag SRAMs and four 64*256 bit (64*32 bytes) data SRAMs\footnoteref{note-width} for the 4-way configuration.
@@ -553,7 +556,7 @@ For a simple write to memory, the diagram would look the same except that instea
 %{{{
 \subsubsection{Advanced eXtensible Interface}
 %\enlargethispage*{2mm}
-\enlargethispage*{1\baselineskip}
+%\enlargethispage*{1\baselineskip}
 Earlier versions of RocketChip used a custom bus interface named Not A Standard Interface (NASTI and NASTI-Lite) for the external busses, but current versions use the Advanced eXtensible Interface (AXI) specified by ARM\cite{axi}.
 AMBA and AXI are well known open standards not only with many peripherals readily available as IP\cite{axi-ip} but also good support for new development\cite{axi-tools}.
 
@@ -569,7 +572,7 @@ Using independent unidirectional channels allows to insert register stages at ar
 AXI can use different power-of-two widths of the data paths up to 1024 bits, the default configuration of RocketChip uses 64 bits for both directions.
 Signals pertaining to a channel are marked by a common prefix\footnote{In the port list of the RocketChip Verilog module, this is actually in the middle of the name, as the different AXI interfaces are also indicated with a prefix.}.
 These prefixes are:
-\enlargethispage*{1\baselineskip}
+%\enlargethispage*{1\baselineskip}
 %{{{ Description: AXI Channel Prefixes
 %
 \begin{description}[\IEEEsetlabelwidth{\texttt{\ldots\_aw\_\ldots}}\IEEEusemathlabelsep]
@@ -625,77 +628,95 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 
 %\bigskip
 %\enlargethispage*{2\baselineskip}
-
+\flushbottom
 %{{{
-\begin{thebibliography}{1}
+\begin{thebibliography}{}
 	\bibitem{riscv}
 		Specification for RISC-V:\\
 		\url{https://riscv.org/specifications/}
 	\bibitem{riscv-vid}
 		Krste Asanović presenting RISC-V at Stanford University in 2014\\
 		\url{https://youtu.be/vB0FC1DZqUM}
+		\vspace*{0.9pt}
 	\bibitem{lowrisc}
 		The lowRISC project:\\
 		\url{http://www.lowrisc.org/}
+		\vspace*{0.9pt}
 	\bibitem{sifive}
 		The SiFive company, founded by the creators of RISC-V:\\
 		\url{https://www.sifive.com/}
+		\vspace*{0.9pt}
 	\bibitem{open-v}
 		Open-V, the Microcontroller developed by OnChip:\\
 		\url{http://hackaday.com/2016/10/10/the-journey-toward-a -completely-open-microcontroller/}\\
 		\url{https://www.crowdsupply.com/onchip/open-v}
+		\vspace*{0.9pt}
 	\bibitem{pulp}
 		The Pulp processor project by ETH Zurich and UNIBO:\\
 		\url{http://www.pulp-platform.org}\\
 		\url{http://iis-projects.ee.ethz.ch/index.php/PULP}
+		\vspace*{0.9pt}
 	\bibitem{iit-madras}
 		The Shakti processor project at IIT Madras:\\
 		\url{http://rise.cse.iitm.ac.in/shakti.html}
+		\vspace*{0.9pt}
 	\bibitem{nvidia}
 		Nvidias' anouncement to switch to RISC-V:\\
 		\url{https://riscv.org/wp-content/uploads/2016/07/Tue1100_Nvidia_RISCV_Story_V2.pdf}
+		\vspace*{0.9pt}
 	\bibitem{riscv-commercial}
 		List of companies presenting commercial implementations of \mbox{RISC-V} at Embedded World 2017\\
 		\url{https://riscv.org/2017/03/risc-v-mainstream-ew2017/}
+		\vspace*{0.9pt}
 	\bibitem{ucb-science}
 		Example of RISC-V used in research project at UC Berkeley:\\
 		\url{https://www.youtube.com/watch?v=WJndUQssFBg&t=1539s}
+		\vspace*{0.9pt}
 	\bibitem{sodor}
 		The Sodor processor collection:\\
 		\url{https://github.com/ucb-bar/riscv-sodor}
+		\vspace*{0.9pt}
 	\bibitem{rocket}
 		Asanović, Krste/Avizienis, Rimas/Bachrach, Jonathan et al.\\
 		The Rocket Chip Generator. (2016)\\
 		Technical Report No. UCB/EECS--2016--17, EECS Department, University of California, Berkeley.\\
 		%\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html}
 		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.pdf}
+		\vspace*{0.9pt}
 	\bibitem{boom}
 		Celio, Christopher and Patterson, David A. and Asanović, Krste\\
 		The Berkeley Out-of-Order Machine (BOOM): An Industry-Competitive, Synthesizable, Parameterized RISC-V Processor\\
 		Technical Report No. Celio:EECS-2015-167, EECS Department, University of California, Berkeley.\\
 		\url{http://www2.eecs.berkeley.edu/Pubs/TechRpts/2015/EECS-2015-167.pdf}
+		\vspace*{0.9pt}
 	\bibitem{code-tables}
 		Decode tables for the three UCB developed RISC-v processors:\\
 		\url{https://github.com/ucb-bar/riscv-sodor/blob/master/src/common/instructions.scala#L39}\\
 		\url{https://github.com/ucb-bar/rocket-chip/blob/master/src/main/scala/rocket/IDecode.scala#L149}\\
 		\url{https://github.com/ucb-bar/riscv-boom/blob/master/src/main/scala/decode.scala#L123}
+		\vspace*{0.9pt}
 	\bibitem{rc-github}
 		The RocketChip github pages\\
 		%\url{https://github.com/ucb-bar/rocket-chip}\\
 		\url{https://github.com/ucb-bar/rocket-chip/tree/f1cb06142e28d837b6347fb09ea8de77e4d96d01}\\
 		\url{https://github.com/ucb-bar/project-template}
+		\vspace*{0.9pt}
 	\bibitem{boom-github}
 		The Berkeley Out Of Order Machine github page\\
 		\url{https://github.com/ucb-bar/riscv-boom}
+		\vspace*{0.9pt}
 	\bibitem{tether}
 		Github issue about untethered operation of RocketChip\\
 		\url{https://github.com/ucb-bar/rocket-chip/issues/434}
+		\vspace*{0.9pt}
 	\bibitem{tilelink}
 		The TileLink Specification, Version 0.3.3\\
-		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8/pub}
+		\url{https://docs.google.com/document/d/1Iczcjigc-LUi8QmDPwnAu1kH4Rrt6Kqi1_EUaCrfrk8}
+		\vspace{0.9pt}
 	\bibitem{rcgen-tutorial}
 		Tutorial for the  Rocket Chip build system.\\
 		\url{https://riscv.org/wp-content/uploads/2015/01/riscv-rocket-chip-tutorial-bootcamp-jan2015.pdf}
+		\vspace*{0.9pt}
 	\bibitem{axi}
 		AMBA® AXI™ and ACE™ Protocol Specification, ARM 2011\\
 		\url{https://www.arm.com/products/system-ip/amba-specifications}\\
@@ -703,14 +724,20 @@ In this paper, RocketChip was examined, the steps for creating new configuration
 		\url{http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0022b/index.html}\\
 		Specification (download from third party without registration):\\
 		\url{http://www.gstitt.ece.ufl.edu/courses/fall15/eel4720_5721/labs/refs/AXI4_specification.pdf}
+		\vspace*{0.9pt}
 	\bibitem{axi-ip}
 		Exemplary listing of available IP cores:\\
 		\url{https://www.design-reuse.com/sip/amba-axi-c-288/}
+		\vspace*{0.9pt}
 	\bibitem{axi-tools}
 		AMBA AXI Accelerated Verification IP (VIP) by Cadence:\\
 		\url{https://ip.cadence.com/ipportfolio/verification-ip/accelerated-vip/arm-amba-2/amba-axi-accelerated-vip}\\
 		AXI Interconnect support by Xilinx:\\
 		\url{https://www.xilinx.com/products/intellectual-property/axi_interconnect.html}\\
+\advance\spaceleft by \pagetotal
+\multiply\spaceleft by -1
+%\typeout{Space on last page:}
+%\showthe\spaceleft
 \end{thebibliography}
 %\enlargethispage{-5in}
 %}}}
