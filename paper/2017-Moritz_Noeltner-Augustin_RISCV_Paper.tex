@@ -516,7 +516,8 @@ A number of behavioural constraints have to be implemented in the agents to ensu
 %{{{ Itemize: TileLink constraints
 
 \begin{itemize}
-	\item If the different channels share the same physical link, preemption rules must be followed to avoid a deadlock situation: Each channel listed in \ref{tilelink-channels} must have priority over the channels listed above it (So that \texttt{Finish} has highest priority and is always sent first.
+	%\item If the different channels share the same physical link, preemption rules must be followed to avoid a deadlock situation: Each channel listed in \ref{tilelink-channels} must have priority over the channels listed above it (So that \texttt{Finish} has highest priority and is always sent first.
+	\item If the different channels share the same physical link, preemption rules must be followed to avoid a deadlock situation: Each channel listed above must have priority over the channels listed above it (So that \texttt{Finish} has highest priority and is always sent first.
 	\item A \texttt{Manager} must wait for transactions on a block to be finished before accepting new requests on that block unless it can merge the results of the different transactions.
 	\item A \texttt{Client} cannot release and respond to a \texttt{Probe} if there is still an outstanding voluntary \texttt{Release} on that block.
 \end{itemize}
