@@ -45,9 +45,14 @@ $(PROJECT_NAME): $(PROJECT_NAME:pdf=tex)
 
 manual: $(PROJECT_NAME:pdf=tex)
 	lualatex --shell-escape --file-line-error --halt-on-error  $<
-	notify-send "Done building"
+	notify-send "Done compiling"
 
 
+final: $(PROJECT_NAME)
+	mv $< tmp.pdf
+	pdftk tmp.pdf cat 1-6 output $<
+	rm tmp.pdf
+	notify-send "Build complete"
 
 
 
